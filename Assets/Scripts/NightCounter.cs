@@ -15,7 +15,7 @@ public class NightCounter : MonoBehaviour {
     }
 
     private void UpdateNightCounter(int night) {
-        nightCounter.text = $"<size=128>第{ConvToKanji(night)}夜</size>\n      {ConvToEnglish(night)} night";
+        nightCounter.text = $"<size=64>第{ConvToKanji(night)}夜</size>\n      {ConvToEnglish(night)} night";
     }
 
     private string ConvToKanji(int num) {

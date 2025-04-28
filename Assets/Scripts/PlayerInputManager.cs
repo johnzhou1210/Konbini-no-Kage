@@ -9,6 +9,10 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField, Self] private PlayerInput playerInput;
     [SerializeField, Self] private CharacterController characterController;
     [SerializeField] private CinemachinePanTilt cmPanTilt;
+    [SerializeField] private float interactDistance = 3f;
+    [SerializeField] private Camera playerCamera;
+    
+    public static event Action<string> OnUpdateInteractPrompt;
 
     private Vector3 velocity;
     
@@ -43,6 +47,22 @@ public class PlayerInputManager : MonoBehaviour
         move = Quaternion.Euler(0, cmPanTilt.PanAxis.Value, 0) * move;
 
         characterController.Move(move); // Translate the player in world space
+
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        string promptText = "";
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance)) {
+            
+            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            if (interactable != null) {
+                promptText = interactable.PromptText;
+                if (playerInput.actions["Interact"].IsPressed()) {
+                    interactable.Interact();
+                }
+                
+            }
+        }
+
+        OnUpdateInteractPrompt?.Invoke(promptText);
         
     }
 }
