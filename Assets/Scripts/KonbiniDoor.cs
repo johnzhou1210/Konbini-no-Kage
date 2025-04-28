@@ -12,7 +12,8 @@ public class KonbiniDoor : MonoBehaviour {
         this.ValidateRefs();
     }
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerStay(Collider other) {
+        print("Trigger!!");
         if (other.CompareTag("Player")) {
             OpenDoor();
         }
@@ -32,5 +33,4 @@ public class KonbiniDoor : MonoBehaviour {
     public void ResetDebounce() {
         debounce = false;
     }
-    
 }
