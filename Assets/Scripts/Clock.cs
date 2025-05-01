@@ -16,10 +16,14 @@ public class Clock : MonoBehaviour
         GameManager.OnTimeUpdate += UpdateTime;
     }
 
+    private void OnDestroy() {
+        GameManager.OnTimeUpdate -= UpdateTime;
+    }
+
     private void UpdateTime(int newTime) {
         int minutes = newTime % 60;
         int hours = newTime / 60;
-        timeText.text = hours.ToString("00") + ":" + minutes.ToString("00");
+        timeText.text = $"REC {hours:00}:{minutes:00}";
     }
     
 }

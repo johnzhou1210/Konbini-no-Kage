@@ -4,7 +4,9 @@ using TMPro;
 using UnityEngine;
 
 public class NightCounter : MonoBehaviour {
-    [SerializeField, Self] private TextMeshProUGUI nightCounter;
+    [SerializeField] private TextMeshProUGUI nightCounterKanji, nightCounterEnglish;
+    [SerializeField, Self] private Animator animator;
+    [SerializeField, Self] private AudioSource audioSource;
     
     private void OnValidate() {
         this.ValidateRefs();
@@ -15,7 +17,23 @@ public class NightCounter : MonoBehaviour {
     }
 
     private void UpdateNightCounter(int night) {
-        nightCounter.text = $"<size=64>第{ConvToKanji(night)}夜</size>\n      {ConvToEnglish(night)} night";
+        animator.Play("NightCounterFadeIn");
+        nightCounterKanji.text = $"<size=128>第{ConvToKanji(night)}夜</size>";
+        nightCounterEnglish.text = $"{ConvToEnglish(night)} night";
+        nightCounterKanji.gameObject.GetComponent<TextJitter>().jitterAmount = 4f;
+        nightCounterEnglish.gameObject.GetComponent<TextJitter>().jitterAmount = 2f;
+        if (night == 4) {
+            Invoke(nameof(DoPun), 2f);
+        }
+        
+    }
+
+    private void DoPun() {
+        nightCounterKanji.text = $"<size=128>第<color=#A1011A>死</color>夜</size>";
+        nightCounterEnglish.text = $"<color=#A1011A>final</color> night";
+        nightCounterKanji.gameObject.GetComponent<TextJitter>().jitterAmount = 12f;
+        nightCounterEnglish.gameObject.GetComponent<TextJitter>().jitterAmount = 3f;
+        audioSource.Play();
     }
 
     private string ConvToKanji(int num) {
@@ -27,7 +45,7 @@ public class NightCounter : MonoBehaviour {
             case 3:
                 return "三";
             case 4:
-                return "<color=red>死</color>";
+                return "四";
             default:
                 return "";
         }
@@ -42,7 +60,7 @@ public class NightCounter : MonoBehaviour {
             case 3:
                 return "third";
             case 4:
-                return "<color=red>final</color>";
+                return "fourth";
             default:
                 return "";
         }

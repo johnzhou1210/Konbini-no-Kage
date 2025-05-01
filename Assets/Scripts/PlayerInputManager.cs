@@ -11,6 +11,8 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private CinemachinePanTilt cmPanTilt;
     [SerializeField] private float interactDistance = 3f;
     [SerializeField] private Camera playerCamera;
+
+    private CinemachineCamera activeCamera;
     
     public static event Action<string> OnUpdateInteractPrompt;
 

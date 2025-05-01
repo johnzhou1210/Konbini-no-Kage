@@ -31,10 +31,11 @@ public class GameManager : MonoBehaviour
     }
 
     private IEnumerator DayNightCycle() {
+        OnNightUpdate?.Invoke(currNight);
         MinutesAfterMidnight = MAMShiftStart[currNight];
         print("in here");
         while (MinutesAfterMidnight != MAMShiftEnd[currNight]) {
-            yield return new WaitForSeconds(.01f);
+            yield return new WaitForSeconds(.05f);
             MinutesAfterMidnight++;
             OnTimeUpdate?.Invoke(MinutesAfterMidnight);
             if (MinutesAfterMidnight == 60 * 24) MinutesAfterMidnight = 0;
