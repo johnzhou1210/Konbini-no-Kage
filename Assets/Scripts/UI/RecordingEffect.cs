@@ -1,28 +1,37 @@
 using System;
 using System.Collections;
 using KBCore.Refs;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class RecordingEffect : MonoBehaviour
 {
-    [SerializeField, Child] private Image image;
+    [SerializeField, Self] private TextMeshProUGUI text;
+
+    private Coroutine coro;
     
     private void OnValidate() {
         this.ValidateRefs();
     }
 
-    private void Start() {
+    private void OnEnable() {
         StartCoroutine(RecordingEffectCoro());
     }
 
     private IEnumerator RecordingEffectCoro() {
         while (true) {
-            image.enabled = true;
+            text.text = "[REC] <color=#a1011a>\u25cf</color>";
             yield return new WaitForSeconds(1f);
-            image.enabled = false;
+            text.text = "[REC]";
             yield return new WaitForSeconds(1f);
         }
     }
-    
+
+    private void OnDisable() {
+        if (coro != null) {
+            StopCoroutine(coro);
+            coro = null;
+        }
+    }
 }

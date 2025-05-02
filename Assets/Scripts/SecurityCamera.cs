@@ -9,6 +9,6 @@ public class SecurityCamera : MonoBehaviour, IInteractable
     
     public void Interact() {
         Debug.Log("Interacted with security camera");
-        SecurityCameraManager.Instance.SetActiveCamera(SecurityCameraManager.Instance.OutsideCam);
+        SecurityCameraManager.Instance.SetActiveCamera(SecurityCameraManager.Instance.SecurityCameraIndx);
     }
 }

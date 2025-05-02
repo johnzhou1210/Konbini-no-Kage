@@ -7,6 +7,7 @@ public class NightCounter : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI nightCounterKanji, nightCounterEnglish;
     [SerializeField, Self] private Animator animator;
     [SerializeField, Self] private AudioSource audioSource;
+   
     
     private void OnValidate() {
         this.ValidateRefs();
@@ -23,7 +24,7 @@ public class NightCounter : MonoBehaviour {
         nightCounterKanji.gameObject.GetComponent<TextJitter>().jitterAmount = 4f;
         nightCounterEnglish.gameObject.GetComponent<TextJitter>().jitterAmount = 2f;
         if (night == 4) {
-            Invoke(nameof(DoPun), 2f);
+            Invoke(nameof(DoPun), 4f);
         }
         
     }
@@ -31,8 +32,8 @@ public class NightCounter : MonoBehaviour {
     private void DoPun() {
         nightCounterKanji.text = $"<size=128>第<color=#A1011A>死</color>夜</size>";
         nightCounterEnglish.text = $"<color=#A1011A>final</color> night";
-        nightCounterKanji.gameObject.GetComponent<TextJitter>().jitterAmount = 12f;
-        nightCounterEnglish.gameObject.GetComponent<TextJitter>().jitterAmount = 3f;
+        nightCounterKanji.gameObject.GetComponent<TextJitter>().jitterAmount = 0f;
+        nightCounterEnglish.gameObject.GetComponent<TextJitter>().jitterAmount = 0f;
         audioSource.Play();
     }
 

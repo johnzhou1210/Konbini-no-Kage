@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -15,12 +17,12 @@ public enum CameraStatus {
 
 [Serializable]
 public struct CameraInfo {
-    public CinemachineCamera CamObj;
+    public CinemachineCamera CineCamObj;
     public bool IsDark;
     public CameraStatus CamStatus;
 
-    public CameraInfo(CinemachineCamera camObj, bool isDark, CameraStatus camStatus) {
-        CamObj = camObj;
+    public CameraInfo(CinemachineCamera cineCamObj, bool isDark, CameraStatus camStatus) {
+        CineCamObj = cineCamObj;
         IsDark = isDark;
         CamStatus = camStatus;
     }
@@ -32,11 +34,16 @@ public class SecurityCameraManager : MonoBehaviour {
 
     [SerializeField] private Volume volume;
 
-    [Header("Cameras")]
-    [field: SerializeField]
-    public CinemachineCamera PlayerCineCam { get; private set; }
+    [SerializeField] private Canvas glowCanvas;
 
+    [SerializeField] private GameObject securityCameraUIOverlay;
+    
+    [Header("CMCameras")]
+    [field: SerializeField] public CinemachineCamera PlayerCineCam { get; private set; }
     [field: SerializeField] public CinemachineCamera OutsideCineCam { get; private set; }
+    [field: SerializeField] public CinemachineCamera InsideCineCam1 { get; private set; }
+    [field: SerializeField] public CinemachineCamera InsideCineCam2 { get; private set; }
+    [field: SerializeField] public CinemachineCamera InsideCineCam3 { get; private set; }
 
     [Header("Volumes")]
     [field: SerializeField]
@@ -54,36 +61,92 @@ public class SecurityCameraManager : MonoBehaviour {
     [field: SerializeField] public VolumeProfile SCVSevereGlitchDark { get; private set; }
     [field: SerializeField] public VolumeProfile SCVNoSignal { get; private set; }
     [field: SerializeField] public VolumeProfile SCVNone { get; private set; }
+    
+    public List<CameraInfo> CameraInfos { get; private set; }
+    public CameraInfo PlayerCamInfo { get; private set; }
 
-    public CameraInfo PlayerCam { get; private set; }
-    public CameraInfo OutsideCam { get; private set; }
+    public bool CheckingCameras { get; private set; } = false;
+
+    public int SecurityCameraIndx {get; private set;} = 0;
 
     private void Awake() {
         if (Instance == null) {
             Instance = this;
+            InitializeCamInfos();
         } else {
             Destroy(gameObject);
             return;
         }
 
-        InitializeCamInfos();
+       
     }
 
     private void InitializeCamInfos() {
-        PlayerCam = new CameraInfo(PlayerCineCam, false, CameraStatus.NONE);
-        OutsideCam = new CameraInfo(OutsideCineCam, true, CameraStatus.FAINT_GLITCH);
+        PlayerCamInfo = new CameraInfo(PlayerCineCam, false, CameraStatus.NONE);
+        
+        print("before finish init");
+        CameraInfos = new List<CameraInfo>();
+        CameraInfos.Add(new CameraInfo(OutsideCineCam, true, CameraStatus.FAINT_GLITCH)); // outside cam 1
+        CameraInfos.Add(new CameraInfo(InsideCineCam1, false, CameraStatus.NORMAL)); // inside cam 1
+        CameraInfos.Add(new CameraInfo(InsideCineCam2, false, CameraStatus.SLIGHT_GLITCH)); // inside cam 2
+        CameraInfos.Add(new CameraInfo(InsideCineCam3, false, CameraStatus.NORMAL)); // inside cam 3
+        
+        print("finish init");
     }
 
     public void SetActiveCamera(CameraInfo camInfo) {
+        GameObject.FindWithTag("MainCamera").GetComponent<CinemachineInputAxisController>().enabled = false;
+        CheckingCameras = true;
+        print("Setting active camera to " + camInfo.CineCamObj.name);
         ZeroAllCamPriorities();
         ResetVolumeProfile();
         volume.profile = GetVolumeProfileFromCamInfo(camInfo);
-        camInfo.CamObj.Priority = 10;
+        camInfo.CineCamObj.Priority = 10;
+        camInfo.CineCamObj.GetComponent<Camera>().depth = 10;
+        glowCanvas.worldCamera = camInfo.CineCamObj.GetComponent<Camera>();
+        securityCameraUIOverlay.SetActive(true);
+        securityCameraUIOverlay.transform.Find("CamNum").GetComponent<TextMeshProUGUI>().text =
+            $"[CAM {SecurityCameraIndx + 1:00}]";
+    }
+
+    public void SetActiveCamera(int index) {
+        if (index < 0) {
+            index = CameraInfos.Count - 1;
+        } else if (index > CameraInfos.Count - 1) {
+            index = 0;
+        }
+        SecurityCameraIndx = index;
+        GameObject.FindWithTag("MainCamera").GetComponent<CinemachineInputAxisController>().enabled = false;
+        CheckingCameras = true;
+        print("Setting active camera to " + CameraInfos[index].CineCamObj.name);
+        ZeroAllCamPriorities();
+        ResetVolumeProfile();
+        volume.profile = GetVolumeProfileFromCamInfo(CameraInfos[index]);
+        CameraInfos[index].CineCamObj.Priority = 10;
+        CameraInfos[index].CineCamObj.GetComponent<Camera>().depth = 10;
+        glowCanvas.worldCamera = CameraInfos[index].CineCamObj.GetComponent<Camera>();
+        securityCameraUIOverlay.SetActive(true);
+        securityCameraUIOverlay.transform.Find("CamNum").GetComponent<TextMeshProUGUI>().text =
+            $"[CAM {SecurityCameraIndx + 1:00}]";
     }
 
     private void ZeroAllCamPriorities() {
-        PlayerCam.CamObj.Priority = 0;
-        OutsideCam.CamObj.Priority = 0;
+        PlayerCamInfo.CineCamObj.Priority = 0;
+        PlayerCamInfo.CineCamObj.GetComponent<Camera>().depth = 0;
+
+        for (int i = 0; i < CameraInfos.Count; i++) {
+            CameraInfo camInfo = CameraInfos[i];
+            camInfo.CineCamObj.Priority = 0;
+            camInfo.CineCamObj.GetComponent<Camera>().depth = 0;
+        }
+        
+    }
+
+    public void ExitSecurityCamera() {
+        SetActiveCamera(PlayerCamInfo);
+        securityCameraUIOverlay.SetActive(false);
+        CheckingCameras = false;
+        GameObject.FindWithTag("MainCamera").GetComponent<CinemachineInputAxisController>().enabled = true;
     }
 
     private void ResetVolumeProfile() { volume.profile = SCVNone; }
@@ -114,4 +177,9 @@ public class SecurityCameraManager : MonoBehaviour {
             return SCVNone;
         }
     }
+
+    public void GoLeft() {
+        
+    }
+    
 }

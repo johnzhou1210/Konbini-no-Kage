@@ -7,6 +7,15 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.coffee.ui-effect": {
+      "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0"
+      },
+      "hash": "3ff52e4735481da36428d361afe28b85eca96e2d"
+    },
     "com.subbu.urp-glitch": {
       "version": "https://github.com/saimarei/URPGlitch.git",
       "depth": 0,

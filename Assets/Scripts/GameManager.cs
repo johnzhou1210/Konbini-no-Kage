@@ -7,7 +7,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] public int MinutesAfterMidnight = 0;
+    public int CurrDayOfMonth = 9;
+    
     public static event Action<int> OnTimeUpdate, OnNightUpdate;
+    
+    
 
     [SerializeField] public Dictionary<int,int> MAMShiftStart, MAMShiftEnd;
     
@@ -37,8 +41,8 @@ public class GameManager : MonoBehaviour
         while (MinutesAfterMidnight != MAMShiftEnd[currNight]) {
             yield return new WaitForSeconds(.05f);
             MinutesAfterMidnight++;
-            OnTimeUpdate?.Invoke(MinutesAfterMidnight);
             if (MinutesAfterMidnight == 60 * 24) MinutesAfterMidnight = 0;
+            OnTimeUpdate?.Invoke(MinutesAfterMidnight);
         }
 
         if (currNight == 4) yield break;
