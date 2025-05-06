@@ -32,6 +32,8 @@ public struct CameraInfo {
 public class SecurityCameraManager : MonoBehaviour {
     public static SecurityCameraManager Instance;
 
+    [SerializeField] private SecurityCamera interactable;
+    
     [SerializeField] private Volume volume;
 
     [SerializeField] private Canvas glowCanvas;
@@ -44,6 +46,7 @@ public class SecurityCameraManager : MonoBehaviour {
     [field: SerializeField] public CinemachineCamera InsideCineCam1 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam2 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam3 { get; private set; }
+    [field: SerializeField] public CinemachineCamera InsideCineCam4 { get; private set; }
 
     [Header("Volumes")]
     [field: SerializeField]
@@ -90,6 +93,7 @@ public class SecurityCameraManager : MonoBehaviour {
         CameraInfos.Add(new CameraInfo(InsideCineCam1, false, CameraStatus.NORMAL)); // inside cam 1
         CameraInfos.Add(new CameraInfo(InsideCineCam2, false, CameraStatus.SLIGHT_GLITCH)); // inside cam 2
         CameraInfos.Add(new CameraInfo(InsideCineCam3, false, CameraStatus.NORMAL)); // inside cam 3
+        CameraInfos.Add(new CameraInfo(InsideCineCam4, false, CameraStatus.NORMAL)); // inside cam 4
         
         print("finish init");
     }
@@ -147,6 +151,7 @@ public class SecurityCameraManager : MonoBehaviour {
         securityCameraUIOverlay.SetActive(false);
         CheckingCameras = false;
         GameObject.FindWithTag("MainCamera").GetComponent<CinemachineInputAxisController>().enabled = true;
+        interactable.UnlitScreen();
     }
 
     private void ResetVolumeProfile() { volume.profile = SCVNone; }
