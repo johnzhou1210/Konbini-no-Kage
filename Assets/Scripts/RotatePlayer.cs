@@ -7,8 +7,8 @@ public class RotatePlayer : MonoBehaviour {
 
     private void Start() {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-        head = GameObject.Find("Head").transform;
-        body = GameObject.Find("Body").transform;
+        head = transform.Find("Head").transform;
+        body = transform.Find("Body").transform;
     }
 
     private void Update() {

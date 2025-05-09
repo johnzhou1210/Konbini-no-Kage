@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
         MinutesAfterMidnight = MAMShiftStart[currNight];
         print("in here");
         while (MinutesAfterMidnight != MAMShiftEnd[currNight]) {
-            yield return new WaitForSeconds(.05f);
+            yield return new WaitForSeconds(.25f);
             MinutesAfterMidnight++;
             if (MinutesAfterMidnight == 60 * 24) MinutesAfterMidnight = 0;
             OnTimeUpdate?.Invoke(MinutesAfterMidnight);

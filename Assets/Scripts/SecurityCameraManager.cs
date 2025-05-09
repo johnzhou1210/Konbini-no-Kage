@@ -42,7 +42,10 @@ public class SecurityCameraManager : MonoBehaviour {
     
     [Header("CMCameras")]
     [field: SerializeField] public CinemachineCamera PlayerCineCam { get; private set; }
-    [field: SerializeField] public CinemachineCamera OutsideCineCam { get; private set; }
+    [field: SerializeField] public CinemachineCamera OutsideCineCam1 { get; private set; }
+    [field: SerializeField] public CinemachineCamera OutsideCineCam2 { get; private set; }
+    [field: SerializeField] public CinemachineCamera OutsideCineCam3 { get; private set; }
+    [field: SerializeField] public CinemachineCamera OutsideCineCam4 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam1 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam2 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam3 { get; private set; }
@@ -89,11 +92,18 @@ public class SecurityCameraManager : MonoBehaviour {
         
         print("before finish init");
         CameraInfos = new List<CameraInfo>();
-        CameraInfos.Add(new CameraInfo(OutsideCineCam, true, CameraStatus.FAINT_GLITCH)); // outside cam 1
+        
         CameraInfos.Add(new CameraInfo(InsideCineCam1, false, CameraStatus.NORMAL)); // inside cam 1
         CameraInfos.Add(new CameraInfo(InsideCineCam2, false, CameraStatus.SLIGHT_GLITCH)); // inside cam 2
         CameraInfos.Add(new CameraInfo(InsideCineCam3, false, CameraStatus.NORMAL)); // inside cam 3
         CameraInfos.Add(new CameraInfo(InsideCineCam4, false, CameraStatus.NORMAL)); // inside cam 4
+        
+        CameraInfos.Add(new CameraInfo(OutsideCineCam1, true, CameraStatus.FAINT_GLITCH)); // outside cam 1
+        CameraInfos.Add(new CameraInfo(OutsideCineCam2, true, CameraStatus.SEVERE_GLITCH)); // outside cam 2
+        CameraInfos.Add(new CameraInfo(OutsideCineCam3, true, CameraStatus.MODERATE_GLITCH)); // outside cam 3
+        CameraInfos.Add(new CameraInfo(OutsideCineCam4, true, CameraStatus.NO_SIGNAL)); // outside cam 4
+        
+       
         
         print("finish init");
     }
@@ -111,6 +121,9 @@ public class SecurityCameraManager : MonoBehaviour {
         securityCameraUIOverlay.SetActive(true);
         securityCameraUIOverlay.transform.Find("CamNum").GetComponent<TextMeshProUGUI>().text =
             $"[CAM {SecurityCameraIndx + 1:00}]";
+        var camComponent = camInfo.CineCamObj.GetComponent<Camera>();
+        if (camComponent) camComponent.enabled = true;
+
     }
 
     public void SetActiveCamera(int index) {
@@ -132,18 +145,21 @@ public class SecurityCameraManager : MonoBehaviour {
         securityCameraUIOverlay.SetActive(true);
         securityCameraUIOverlay.transform.Find("CamNum").GetComponent<TextMeshProUGUI>().text =
             $"[CAM {SecurityCameraIndx + 1:00}]";
+        var camComponent = CameraInfos[index].CineCamObj.GetComponent<Camera>();
+        if (camComponent) camComponent.enabled = true;
+
     }
 
     private void ZeroAllCamPriorities() {
         PlayerCamInfo.CineCamObj.Priority = 0;
-        PlayerCamInfo.CineCamObj.GetComponent<Camera>().depth = 0;
+        var playerCam = PlayerCamInfo.CineCamObj.GetComponent<Camera>();
+        if (playerCam) playerCam.enabled = false;
 
-        for (int i = 0; i < CameraInfos.Count; i++) {
-            CameraInfo camInfo = CameraInfos[i];
+        foreach (CameraInfo camInfo in CameraInfos) {
             camInfo.CineCamObj.Priority = 0;
-            camInfo.CineCamObj.GetComponent<Camera>().depth = 0;
+            var unityCam = camInfo.CineCamObj.GetComponent<Camera>();
+            if (unityCam) unityCam.enabled = false;
         }
-        
     }
 
     public void ExitSecurityCamera() {
@@ -152,6 +168,9 @@ public class SecurityCameraManager : MonoBehaviour {
         CheckingCameras = false;
         GameObject.FindWithTag("MainCamera").GetComponent<CinemachineInputAxisController>().enabled = true;
         interactable.UnlitScreen();
+        var playerCam = PlayerCamInfo.CineCamObj.GetComponent<Camera>();
+        if (playerCam) playerCam.enabled = true;
+
     }
 
     private void ResetVolumeProfile() { volume.profile = SCVNone; }

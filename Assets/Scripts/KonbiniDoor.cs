@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KonbiniDoor : MonoBehaviour {
     [SerializeField, Self] private Animator animator;
-    [SerializeField, Self] private AudioSource audio;
+    [SerializeField, Self] private new AudioSource audio;
 
     private bool debounce = false;
 
@@ -13,14 +13,13 @@ public class KonbiniDoor : MonoBehaviour {
     }
 
     private void OnTriggerStay(Collider other) {
-        print("Trigger!!");
-        if (other.CompareTag("Player")) {
+        if (other.CompareTag("Player") || other.CompareTag("NPC")) {
             OpenDoor();
         }
     }
 
     private void Start() {
-        Invoke(nameof(OpenDoor), 1f);
+        // Invoke(nameof(OpenDoor), 1f);
     }
 
     public void OpenDoor() {

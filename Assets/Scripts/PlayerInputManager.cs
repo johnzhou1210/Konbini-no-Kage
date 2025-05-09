@@ -10,12 +10,19 @@ public class PlayerInputManager : MonoBehaviour {
     [SerializeField] private CinemachinePanTilt cmPanTilt;
     [SerializeField] private float interactDistance = 3f;
     [SerializeField] private Camera playerCamera;
+    [SerializeField] private LayerMask interactMask;
 
     private CinemachineCamera activeCamera;
 
     private bool canInteract = true;
 
-    
+
+    private void Awake() {
+        // Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+
+
+    }
+
     public static event Action<string> OnUpdateInteractPrompt;
 
     private Vector3 velocity;
@@ -78,15 +85,16 @@ public class PlayerInputManager : MonoBehaviour {
 
     private string TryInteract() {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance)) {
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask)) {
             if (!canInteract) return "";
-            
+
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
             if (interactable != null) {
                 string promptText = interactable.PromptText;
                 if (playerInput.actions["Interact"].IsPressed()) {
                     canInteract = false;
                     interactable.Interact();
+                    Invoke("ResetInteract", 2f);
                 }
 
                 return promptText;
@@ -95,4 +103,9 @@ public class PlayerInputManager : MonoBehaviour {
 
         return "";
     }
+
+    private void ResetInteract() {
+        canInteract = true;
+    }
+    
 }
