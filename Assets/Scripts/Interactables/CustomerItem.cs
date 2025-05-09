@@ -33,7 +33,9 @@ public class CustomerItem : MonoBehaviour, IInteractable
     }
 
     public void EnableInteraction() {
-        collider.enabled = true;
+        if (LineupManager.Instance.GetLength() > 0) {
+            collider.enabled = true;
+        }
     }
     
     

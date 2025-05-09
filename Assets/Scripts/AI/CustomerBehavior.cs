@@ -28,6 +28,7 @@ public class CustomerBehavior : MonoBehaviour {
     private Coroutine wanderCoroutine;
     private Coroutine checkoutCoroutine;
     private Coroutine leaveCoroutine;
+    private Coroutine moveCoroutine;
 
     private bool weirdStare = false;
     private bool windowShopping = false;
@@ -148,10 +149,19 @@ public class CustomerBehavior : MonoBehaviour {
     }
 
     public void MoveTo(Vector3 tPos, bool inline = false) {
+        if (moveCoroutine != null) {
+            StopCoroutine(moveCoroutine);
+            moveCoroutine = null;
+        }
+        moveCoroutine = StartCoroutine(MoveCoroutine(tPos, inline));
+    }
+
+    private IEnumerator MoveCoroutine(Vector3 tPos, bool inline = false) {
         if (Vector3.Distance(tPos, transform.position) > 1f) animator.Play("Walk");
         targetPos = tPos;
         agent.stoppingDistance = .1f;
         agent.SetDestination(targetPos);
+        yield return new WaitUntil(() => Vector3.Distance(transform.position, tPos) < .5f);
         if (inline) {
             CustomerItem.Instance.EnableInteraction();
         }

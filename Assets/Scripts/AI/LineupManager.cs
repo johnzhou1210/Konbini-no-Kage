@@ -58,5 +58,9 @@ public class LineupManager : MonoBehaviour
         }
     }
 
+    public int GetLength() {
+        return queue.Count;
+    }
+
     
 }
