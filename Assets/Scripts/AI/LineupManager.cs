@@ -27,8 +27,8 @@ public class LineupManager : MonoBehaviour
     
     public void AdvanceQueue() {
         CustomerBehavior dequeuedCustomer = queue.Dequeue();
-        dequeuedCustomer.InitiateLeave();
-        AssignQueuePositions();
+        dequeuedCustomer.InitiateLeave(true);
+        Invoke(nameof(AssignQueuePositions), 3f);
         // CheckoutStopRadius += NPCLineupGap;
         // OnLineupGapUpdate?.Invoke(CheckoutStopRadius);
     }

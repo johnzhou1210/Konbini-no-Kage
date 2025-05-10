@@ -18,6 +18,7 @@ public class CustomerBehavior : MonoBehaviour {
     [SerializeField] private Vector3 vanishingPoint = Vector3.zero;
     [SerializeField] private float playerLookRange = 5f;
     [SerializeField] private float windowShoppingChance = .5f;
+    [SerializeField] private GameObject plasticBag;
 
 
     [SerializeField] private Transform waypointsTransform;
@@ -109,7 +110,7 @@ public class CustomerBehavior : MonoBehaviour {
         yield return null;
     }
 
-    public void InitiateLeave() {
+    public void InitiateLeave(bool boughtItem = false) {
         if (wanderCoroutine != null) {
             StopCoroutine(wanderCoroutine);
             wanderCoroutine = null;
@@ -120,10 +121,12 @@ public class CustomerBehavior : MonoBehaviour {
             checkoutCoroutine = null;
         }
 
-        leaveCoroutine = StartCoroutine(LeaveStore());
+        leaveCoroutine = StartCoroutine(LeaveStore(boughtItem));
     }
 
-    private IEnumerator LeaveStore() {
+    private IEnumerator LeaveStore(bool boughtItem = false) {
+        if (boughtItem) plasticBag.SetActive(true);
+        
         bool willNod = Random.Range(0f, 1f) <= .67f;
 
         if (willNod) {
@@ -157,7 +160,9 @@ public class CustomerBehavior : MonoBehaviour {
     }
 
     private IEnumerator MoveCoroutine(Vector3 tPos, bool inline = false) {
-        if (Vector3.Distance(tPos, transform.position) > 1f) animator.Play("Walk");
+        float distanceThreshold = 1f;
+        if (inline) distanceThreshold = 1.5f;
+        if (Vector3.Distance(tPos, transform.position) > distanceThreshold) animator.Play("Walk");
         targetPos = tPos;
         agent.stoppingDistance = .1f;
         agent.SetDestination(targetPos);
