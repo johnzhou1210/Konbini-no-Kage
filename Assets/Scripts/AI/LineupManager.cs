@@ -40,6 +40,7 @@ public class LineupManager : MonoBehaviour
         {
             if (i < QueuePositions.Count)
             {
+                
                 customer.MoveTo(QueuePositions[i].position, true);
             }
             else
@@ -62,5 +63,10 @@ public class LineupManager : MonoBehaviour
         return queue.Count;
     }
 
+
+    public void ClearItems() {
+        queue.Clear();
+        
+    }
     
 }

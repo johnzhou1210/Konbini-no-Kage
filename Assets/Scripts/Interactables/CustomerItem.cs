@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using KBCore.Refs;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -28,13 +29,15 @@ public class CustomerItem : MonoBehaviour, IInteractable
         audio.pitch = Random.Range(0.8f, 1.2f);
         audio.Play();
         GetComponent<Renderer>().enabled = false;
+        CounterItemDisplayer.Instance.ClearItems();
         collider.enabled = false;
         LineupManager.Instance.AdvanceQueue();
     }
 
-    public void EnableInteraction() {
+    public void EnableInteraction(List<KonbiniItem> items) {
         if (LineupManager.Instance.GetLength() > 0) {
             collider.enabled = true;
+            CounterItemDisplayer.Instance.DisplayCustomerItems(items);
         }
     }
     

@@ -46,6 +46,7 @@ public class SecurityCameraManager : MonoBehaviour {
     [field: SerializeField] public CinemachineCamera OutsideCineCam2 { get; private set; }
     [field: SerializeField] public CinemachineCamera OutsideCineCam3 { get; private set; }
     [field: SerializeField] public CinemachineCamera OutsideCineCam4 { get; private set; }
+    [field: SerializeField] public CinemachineCamera OutsideCineCam5 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam1 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam2 { get; private set; }
     [field: SerializeField] public CinemachineCamera InsideCineCam3 { get; private set; }
@@ -99,6 +100,7 @@ public class SecurityCameraManager : MonoBehaviour {
         CameraInfos.Add(new CameraInfo(InsideCineCam4, false, CameraStatus.NORMAL)); // inside cam 4
         
         CameraInfos.Add(new CameraInfo(OutsideCineCam1, true, CameraStatus.FAINT_GLITCH)); // outside cam 1
+        CameraInfos.Add(new CameraInfo(OutsideCineCam5, true, CameraStatus.NORMAL)); // outside cam 5
         CameraInfos.Add(new CameraInfo(OutsideCineCam2, true, CameraStatus.SEVERE_GLITCH)); // outside cam 2
         CameraInfos.Add(new CameraInfo(OutsideCineCam3, true, CameraStatus.MODERATE_GLITCH)); // outside cam 3
         CameraInfos.Add(new CameraInfo(OutsideCineCam4, true, CameraStatus.NO_SIGNAL)); // outside cam 4
@@ -202,8 +204,10 @@ public class SecurityCameraManager : MonoBehaviour {
         }
     }
 
-    public void GoLeft() {
-        
+    public void Reset() {
+        ExitSecurityCamera();
+        ResetVolumeProfile();
+        SecurityCameraIndx = 0;
     }
     
 }

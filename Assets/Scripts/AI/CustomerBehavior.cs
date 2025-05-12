@@ -15,16 +15,17 @@ public class CustomerBehavior : MonoBehaviour {
     [SerializeField] private float minWait = 3f, maxWait = 8f;
     [SerializeField] private float minCheckoutTime = 10f, maxCheckoutTime = 60f;
     [SerializeField] private float targetStopRadius = 1.5f;
-    [SerializeField] private Vector3 vanishingPoint = Vector3.zero;
     [SerializeField] private float playerLookRange = 5f;
     [SerializeField] private float windowShoppingChance = .5f;
     [SerializeField] private GameObject plasticBag;
 
+    [SerializeField] private int minRandomItems = 1, maxRandomItems = 4;
+    [SerializeField] private List<KonbiniItem> customItems;
+    
 
-    [SerializeField] private Transform waypointsTransform;
-    [SerializeField] private Transform checkoutTransform;
+    public bool ReachedFront = false;
 
-    private List<Transform> waypoints;
+    private List<Transform> waypoints, vanishingPoints;
 
     private Coroutine wanderCoroutine;
     private Coroutine checkoutCoroutine;
@@ -42,9 +43,14 @@ public class CustomerBehavior : MonoBehaviour {
 
     private void Start() {
         waypoints = new List<Transform>();
+        vanishingPoints = new List<Transform>();
         agent = GetComponent<NavMeshAgent>();
 
-        foreach (Transform child in waypointsTransform) {
+        foreach (Transform child in GameObject.FindWithTag("NPCSpawnPoints").transform) {
+            vanishingPoints.Add(child);
+        }
+        
+        foreach (Transform child in GameObject.FindWithTag("StandPoints").transform) {
             waypoints.Add(child);
         }
 
@@ -53,6 +59,17 @@ public class CustomerBehavior : MonoBehaviour {
         if (Random.Range(0f, 1f) < windowShoppingChance) {
             windowShopping = true;
         }
+        
+        if (customItems == null || customItems.Count == 0) {
+            customItems = new List<KonbiniItem>();
+            // Add random items
+            int randomItems = Random.Range(minRandomItems, maxRandomItems + 1);
+            for (int i = 0; i < randomItems; i++) {
+                KonbiniItem randomItem = CounterItemDisplayer.Instance.AllItems[Random.Range(0, CounterItemDisplayer.Instance.AllItems.Count)];
+                customItems.Add(randomItem);
+            }
+        }
+        
     }
 
     private IEnumerator WanderCoroutine() {
@@ -77,13 +94,14 @@ public class CustomerBehavior : MonoBehaviour {
         }
         
         // Set destination to checkout position
-        targetPos = checkoutTransform.position;
+        targetPos = GameObject.FindWithTag("Lineup").transform.position;
         LineupManager.Instance.LineUpCustomer(this);
         yield return new WaitUntil(() => Vector3.Distance(transform.position, targetPos) < .5f);
         animator.Play("Idle");
 
         Debug.LogWarning("Customer lined up!");
-        CustomerItem.Instance.EnableInteraction();
+  
+        // SetupItemsAndEnableInteraction();
 
 
         if (Random.Range(0f, 1f) < .75f) {
@@ -140,8 +158,8 @@ public class CustomerBehavior : MonoBehaviour {
         yield return new WaitForSeconds(Random.Range(.5f, 3f));
         playerLookRange = 0f;
         weirdStare = false;
-        MoveTo(vanishingPoint);
-        yield return new WaitUntil(() => Vector3.Distance(transform.position, targetPos) < .5f);
+        MoveTo(vanishingPoints[Random.Range(0, vanishingPoints.Count)].position);
+        yield return new WaitUntil(() => Vector3.Distance(transform.position, targetPos) < 1f);
         animator.Play("Idle");
 
         yield return new WaitForSeconds(2f);
@@ -167,8 +185,11 @@ public class CustomerBehavior : MonoBehaviour {
         agent.stoppingDistance = .1f;
         agent.SetDestination(targetPos);
         yield return new WaitUntil(() => Vector3.Distance(transform.position, tPos) < .5f);
-        if (inline) {
-            CustomerItem.Instance.EnableInteraction();
+        if (inline && LineupManager.Instance.queue.Peek() == this && ReachedFront == false) {
+            ReachedFront = true;
+            Invoke(nameof(SetupItemsAndEnableInteraction), 1f);
+            
+            
         }
     }
 
@@ -187,4 +208,9 @@ public class CustomerBehavior : MonoBehaviour {
 
         
     }
+
+    private void SetupItemsAndEnableInteraction() {
+        CustomerItem.Instance.EnableInteraction(customItems);
+    }
+    
 }
