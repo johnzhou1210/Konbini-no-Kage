@@ -10,12 +10,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 615505484796670821, guid: 14988d7df5bf7d044bb8c18368e072e3, type: 3}
       propertyPath: m_WalkableMask
-      value: 7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 1052353051825686160, guid: 14988d7df5bf7d044bb8c18368e072e3, type: 3}
       propertyPath: m_Name
       value: NPC_OLD_WOMAN Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 1074426356046024062, guid: 14988d7df5bf7d044bb8c18368e072e3, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bafb3e5d672052446a3509e786f891fb, type: 2}
     - target: {fileID: 4864482052666858412, guid: 14988d7df5bf7d044bb8c18368e072e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7.591279

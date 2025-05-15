@@ -3,6 +3,7 @@ using KBCore.Refs;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerInputManager : MonoBehaviour {
     [SerializeField, Self] private PlayerInput playerInput;
@@ -11,17 +12,11 @@ public class PlayerInputManager : MonoBehaviour {
     [SerializeField] private float interactDistance = 3f;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private LayerMask interactMask;
-
+    
+    
     private CinemachineCamera activeCamera;
 
     private bool canInteract = true;
-
-
-    private void Awake() {
-        // Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
-
-
-    }
 
     public static event Action<string> OnUpdateInteractPrompt;
 
@@ -37,22 +32,26 @@ public class PlayerInputManager : MonoBehaviour {
     private void InitRadius() { characterController.radius = 0.5f; }
     
     private void Update() {
-        Vector2 moveInput = playerInput.actions["Move"].ReadValue<Vector2>();
+        if (Input.GetKeyDown(KeyCode.M)) {
+            Cursor.lockState = CursorLockMode.None;
+            SceneManager.LoadScene(0);
+        }
         
-        if (SecurityCameraManager.Instance.CheckingCameras) {
+        Vector2 moveInput = playerInput.actions["Move"].ReadValue<Vector2>();
+        if (GameQuery.OnGetIsCheckingCameras?.Invoke() ?? false) {
             if (playerInput.actions["CamLeft"].WasPerformedThisFrame()) {
-                SecurityCameraManager.Instance.SetActiveCamera(SecurityCameraManager.Instance.SecurityCameraIndx - 1);
+                GameEvents.RaiseOnSetActiveCamera(GameQuery.OnGetCurrentSecurityCameraIndex?.Invoke() - 1 ?? 0);
             } 
             if (playerInput.actions["CamRight"].WasPerformedThisFrame()) {
-                SecurityCameraManager.Instance.SetActiveCamera(SecurityCameraManager.Instance.SecurityCameraIndx + 1);
+                GameEvents.RaiseOnSetActiveCamera(GameQuery.OnGetCurrentSecurityCameraIndex?.Invoke() + 1 ?? 0);
             }
         }
 
         
         if (playerInput.actions["Exit"].WasPerformedThisFrame()) {
             Debug.LogWarning("Trying to exit cam");
-            if (SecurityCameraManager.Instance.CheckingCameras) {
-                SecurityCameraManager.Instance.ExitSecurityCamera();
+            if (GameQuery.OnGetIsCheckingCameras?.Invoke() ?? false) {
+                GameEvents.RaiseOnExitSecurityCamera();
                 canInteract = true;
             }
         }
@@ -67,8 +66,7 @@ public class PlayerInputManager : MonoBehaviour {
        
 
         
-
-        if (!SecurityCameraManager.Instance.CheckingCameras) {
+        if (!GameQuery.OnGetIsCheckingCameras?.Invoke() ?? false) {
             // Player movement
             Vector3 move = new Vector3(moveInput.x, 0f, moveInput.y) * (5f * Time.deltaTime);
             move = Quaternion.Euler(0, cmPanTilt.PanAxis.Value, 0) * move;

@@ -1,12 +1,12 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using KBCore.Refs;
 using Random = UnityEngine.Random;
 
-public class CounterItemDisplayer : MonoBehaviour
-{
-    public static CounterItemDisplayer Instance;
-
+public class CounterItemDisplayer : MonoBehaviour {
+    [SerializeField, Self] private Renderer rend;
+    
     [Header("Spawn Settings")]
     public Transform spawnArea;
     public GameObject itemQuadPrefab;
@@ -24,17 +24,27 @@ public class CounterItemDisplayer : MonoBehaviour
 
     private List<GameObject> spawnedItems = new List<GameObject>();
 
-    private void Awake()
-    {
-        if (Instance == null) {
-            Instance = this;
-        } else {
-            Destroy(this);
-        }
-
-        
+    private void OnValidate() {
+        this.ValidateRefs();
     }
-    
+
+
+    private void OnEnable() {
+        GameEvents.OnCounterItemDisplayClearItems += ClearItems;
+        GameEvents.OnDisplayCustomerItems += DisplayCustomerItems;
+        
+        GameQuery.OnGetCounterItemDisplayAllItems = () => AllItems;
+        GameQuery.OnGetCounterItemDisplayGetItemByIndex = GetItemByIndex;
+    }
+
+    private void OnDisable() {
+        GameEvents.OnCounterItemDisplayClearItems -= ClearItems;
+        GameEvents.OnDisplayCustomerItems -= DisplayCustomerItems;
+        
+        GameQuery.OnGetCounterItemDisplayAllItems = null;
+        GameQuery.OnGetCounterItemDisplayGetItemByIndex = null;
+    }
+
     public void DisplayCustomerItems(List<KonbiniItem> customerItems)
     {
         ClearItems();
@@ -56,6 +66,8 @@ public class CounterItemDisplayer : MonoBehaviour
 
             Debug.Log($"Spawned Item: {itemData.itemName} - ¥{itemData.price}");
         }
+
+        rend.enabled = true;
     }
     
     public void DisplayCustomerItems()
@@ -71,12 +83,13 @@ public class CounterItemDisplayer : MonoBehaviour
 
 
     private void Start() {
-        // DisplayCustomerItems();
+        
         moneySetupsList = new List<GameObject>();
         foreach (Transform child in moneySetups.transform) {
             moneySetupsList.Add(child.gameObject);
             child.gameObject.SetActive(false);
         }
+        // DisplayCustomerItems();
     }
 
     public void ClearItems()
@@ -90,5 +103,11 @@ public class CounterItemDisplayer : MonoBehaviour
             item.SetActive(false);
         }
         spawnedItems.Clear();
+        rend.enabled = false;
     }
+
+    private KonbiniItem GetItemByIndex(int index) {
+        return AllItems[index];
+    }
+    
 }

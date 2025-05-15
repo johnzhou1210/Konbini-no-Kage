@@ -1,23 +1,32 @@
 using System;
+using System.Collections;
 using KBCore.Refs;
 using TMPro;
 using UnityEngine;
 
 public class NightCounter : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI nightCounterKanji, nightCounterEnglish;
-    [SerializeField, Self] private Animator animator;
-    [SerializeField, Self] private AudioSource audioSource;
-   
+    [SerializeField] private Animator animator;
+    [SerializeField] private AudioSource audioSource;
     
-    private void OnValidate() {
-        this.ValidateRefs();
+
+    private void OnEnable() {
+        GameEvents.OnNightUpdate += UpdateNightCounter;
     }
 
     private void Start() {
-        GameManager.OnNightUpdate += UpdateNightCounter;
+        animator = this.GetComponent<Animator>();
+        audioSource = this.GetComponent<AudioSource>();
     }
 
+
+    private void OnDisable() {
+        GameEvents.OnNightUpdate -= UpdateNightCounter;
+    }
+    
+
     private void UpdateNightCounter(int night) {
+        
         animator.Play("NightCounterFadeIn");
         nightCounterKanji.text = $"<size=128>第{ConvToKanji(night)}夜</size>";
         nightCounterEnglish.text = $"{ConvToEnglish(night)} night";

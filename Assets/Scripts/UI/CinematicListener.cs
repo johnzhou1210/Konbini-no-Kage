@@ -9,8 +9,12 @@ public class CinematicListener : MonoBehaviour
         this.ValidateRefs();
     }
 
-    private void Start() {
-        GameManager.OnNightUpdate += PlayCinematicAnimation;
+    private void OnEnable() {
+        GameEvents.OnNightUpdate += PlayCinematicAnimation;
+    }
+
+    private void OnDisable() {
+        GameEvents.OnNightUpdate -= PlayCinematicAnimation;
     }
 
     private void PlayCinematicAnimation(int night) {

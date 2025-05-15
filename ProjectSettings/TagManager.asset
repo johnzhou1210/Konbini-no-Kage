@@ -8,6 +8,9 @@ TagManager:
   - Lineup
   - StandPoints
   - NPCSpawnPoints
+  - OutsideStarePoints
+  - Outage
+  - NonOutage
   layers:
   - Default
   - TransparentFX
@@ -21,7 +24,7 @@ TagManager:
   - Bounds
   - Invisible
   - Shadow
-  - 
+  - Player
   - 
   - 
   - 

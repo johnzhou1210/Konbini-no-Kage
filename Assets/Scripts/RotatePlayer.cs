@@ -13,7 +13,7 @@ public class RotatePlayer : MonoBehaviour {
 
     private void Update() {
         if (cam == null) return;
-        if (SecurityCameraManager.Instance.CheckingCameras) return;
+        if (GameQuery.OnGetIsCheckingCameras?.Invoke() ?? false) return;
         
  
             Vector3 camEuler = cam.transform.localEulerAngles;

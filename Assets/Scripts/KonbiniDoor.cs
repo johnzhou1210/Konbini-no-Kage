@@ -8,6 +8,14 @@ public class KonbiniDoor : MonoBehaviour {
 
     private bool debounce = false;
 
+    private void OnEnable() {
+        GameEvents.OnKonbiniDoorOpened += OpenDoor;
+    }
+
+    private void OnDisable() {
+        GameEvents.OnKonbiniDoorOpened -= OpenDoor;
+    }
+
     private void OnValidate() {
         this.ValidateRefs();
     }
@@ -22,7 +30,7 @@ public class KonbiniDoor : MonoBehaviour {
         // Invoke(nameof(OpenDoor), 1f);
     }
 
-    public void OpenDoor() {
+    private void OpenDoor() {
         if (debounce) return;
         debounce = true;
         animator.Play("KonbiniDoorOpen");

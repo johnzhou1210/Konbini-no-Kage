@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 615505484796670821, guid: 14988d7df5bf7d044bb8c18368e072e3, type: 3}
       propertyPath: m_WalkableMask
-      value: 7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 1052353051825686160, guid: 14988d7df5bf7d044bb8c18368e072e3, type: 3}
       propertyPath: m_Name

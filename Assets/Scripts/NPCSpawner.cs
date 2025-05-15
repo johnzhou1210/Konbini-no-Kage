@@ -1,25 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class NPCSpawner : MonoBehaviour
 {
-   public static NPCSpawner Instance;
    [SerializeField] private List<GameObject> spawnableNPCs;
    [SerializeField] private Transform spawnPointsContainer;
    [SerializeField] private Transform npcContainer;
 
    
    private List<Transform> spawnPoints;
-   
-   private void Awake() {
-      if (Instance == null) {
-         Instance = this;
-      } else {
-         Destroy(gameObject);
-      }
-   }
 
    private void Start() {
       spawnPoints = new List<Transform>();
@@ -28,9 +20,26 @@ public class NPCSpawner : MonoBehaviour
       }
    }
 
-   public void SpawnRandomNPC() {
+   private void OnEnable() {
+      GameEvents.OnSpawnRandomNPC += SpawnRandomNPC;
+      GameEvents.OnClearSpawnedNPCs += ClearSpawnedNPCs;
+   }
+
+   private void OnDisable() {
+      GameEvents.OnSpawnRandomNPC -= SpawnRandomNPC;
+      GameEvents.OnClearSpawnedNPCs -= ClearSpawnedNPCs;
+   }
+
+   public void SpawnRandomNPC(HashSet<CustomerTendency> tendencies = null) {
       GameObject spawnedNPC = Instantiate(spawnableNPCs[Random.Range(0, spawnableNPCs.Count)], spawnPoints[Random.Range(0,spawnPoints.Count)].position, Quaternion.identity);
       spawnedNPC.transform.parent = npcContainer;
+      if (tendencies == null) return;
+      
+      CustomerBehavior behavior = spawnedNPC.GetComponent<CustomerBehavior>();
+      foreach (CustomerTendency tendency in tendencies) {
+         behavior.AddCustomerTendency(tendency);
+      }
+      Debug.LogWarning("Spawned Abnormal "+string.Join(", ", tendencies.Select(t => t.ToString()))+" NPC named " + spawnedNPC.name + "!");
    }
 
    public void ClearSpawnedNPCs() {

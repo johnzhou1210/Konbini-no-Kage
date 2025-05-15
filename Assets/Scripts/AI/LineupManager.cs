@@ -4,20 +4,27 @@ using UnityEngine;
 
 public class LineupManager : MonoBehaviour
 {
-    public static LineupManager Instance;
     public float CheckoutStopRadius { get; private set; } = 1.5f;
     [field: SerializeField] public List<Transform> QueuePositions { get; private set; }
-    public Queue<CustomerBehavior> queue = new Queue<CustomerBehavior>();    
+    public Queue<CustomerBehavior> queue = new Queue<CustomerBehavior>();
 
-    private void Awake() {
-        if (Instance == null) {
-            Instance = this;
-        } else {
-            Destroy(gameObject);
-        }
+
+    private void OnEnable() {
+        GameEvents.OnLineupManagerAdvanceQueue += AdvanceQueue;
+        GameEvents.OnLineupManagerClearItems += ClearItems;
+        GameEvents.OnLineupManagerLineUpCustomer += LineUpCustomer;
+
+        GameQuery.OnGetLineupManagerQueue = () => queue;
     }
 
-    
+    private void OnDisable() {
+        GameEvents.OnLineupManagerAdvanceQueue -= AdvanceQueue;
+        GameEvents.OnLineupManagerClearItems -= ClearItems;
+        GameEvents.OnLineupManagerLineUpCustomer -= LineUpCustomer;
+        
+        GameQuery.OnGetLineupManagerQueue = null;
+    }
+
     public void LineUpCustomer(CustomerBehavior b) {
         queue.Enqueue(b);
         AssignQueuePositions();

@@ -14,23 +14,22 @@ public class Clock : MonoBehaviour
     }
 
     private void Start() {
-        GameManager.OnTimeUpdate += UpdateTime;
+        GameEvents.OnTimeUpdate += UpdateTime;
     }
 
     private void OnDestroy() {
-        GameManager.OnTimeUpdate -= UpdateTime;
+        GameEvents.OnTimeUpdate -= UpdateTime;
     }
 
     private void UpdateTime(int newTime) {
+        print(newTime);
         int minutes = newTime % 60;
         int hours = newTime / 60;
         timeText.text = $"{hours:00}:{minutes:00}";
-
-        if (newTime == 0) {
-            print("CHANGED DAY");
-            GameManager.Instance.CurrDayOfMonth++;
-            dateText.text = $"[1999/08/{GameManager.Instance.CurrDayOfMonth:00}]";
-        }
+        
+        int currDayOfMonth = GameQuery.OnGetCurrentDayOfMonth?.Invoke() ?? 0;
+        dateText.text = $"[1999/08/{currDayOfMonth :00}]";
+        
     }
 
     private void UpdateDate(int currNight) {
