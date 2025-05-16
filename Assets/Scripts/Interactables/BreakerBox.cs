@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using KBCore.Refs;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,11 +9,12 @@ public class BreakerBox : MonoBehaviour, IInteractable
     public string PromptText { get; set; } = "Interact with breaker box";
     [SerializeField] private GameObject[] onSwitches, offSwitches;
     [SerializeField, Self] private AudioSource audioSource;
-    [SerializeField] private AudioSource closeSound;
+    [SerializeField] private AudioSource closeSound, breakSound;
 
     [SerializeField] private GameObject[] outageGOs, nonOutageGOs; 
     
     private bool lightsOn = true;
+    private Coroutine flickerCoroutine;
 
     private void OnValidate() {
         this.ValidateRefs();
@@ -20,10 +22,16 @@ public class BreakerBox : MonoBehaviour, IInteractable
 
     private void OnEnable() {
         GameEvents.OnBreakerBoxTogglePower += SetLightsEnabled;
+        GameEvents.OnBreakerBoxCallFlickerThenExtinguish += CallFlickerThenExtinguish;
     }
 
     private void OnDisable() {
         GameEvents.OnBreakerBoxTogglePower -= SetLightsEnabled;
+        GameEvents.OnBreakerBoxCallFlickerThenExtinguish -= CallFlickerThenExtinguish;
+        if (flickerCoroutine != null) {
+            StopCoroutine(flickerCoroutine);
+            flickerCoroutine = null;
+        }
     }
 
     private void Start() {
@@ -35,6 +43,23 @@ public class BreakerBox : MonoBehaviour, IInteractable
         GameEvents.RaiseOnBreakerBoxTogglePower(!lightsOn);
         
     }
+
+
+    private IEnumerator FlickerThenExtinguish() {
+        // remove player from security camera if they are currently viewing them when an outage occurs
+        SetAllLightsActive(false);
+        yield return new WaitForSeconds(.25f);
+        SetAllLightsActive(true);
+        yield return new WaitForSeconds(.4f);
+        SetAllLightsActive(false);
+        yield return new WaitForSeconds(.2f);
+        SetAllLightsActive(true);
+        yield return new WaitForSeconds(.1f);
+        SetLightsEnabled(false);
+        breakSound.Play();
+        yield return null;
+    }
+    
 
     private void SetLightsEnabled(bool val) {
         audioSource.pitch = Random.Range(0.8f, 1.2f);
@@ -53,15 +78,21 @@ public class BreakerBox : MonoBehaviour, IInteractable
         // remove player from security camera if they are currently viewing them when an outage occurs
         if (!lightsOn) GameEvents.RaiseOnExitSecurityCamera();
         
+        SetAllLightsActive(lightsOn);
+    }
+
+    private void CallFlickerThenExtinguish() {
+        flickerCoroutine = StartCoroutine(FlickerThenExtinguish());
+    }
+    
+    private void SetAllLightsActive(bool val) {
         foreach (GameObject outageGO in outageGOs) {
-            outageGO.SetActive(!lightsOn);
+            outageGO.SetActive(!val);
         }
 
         foreach (GameObject nonOutageGO in nonOutageGOs) {
-            nonOutageGO.SetActive(lightsOn);
+            nonOutageGO.SetActive(val);
         }
-        
-        
         
     }
     

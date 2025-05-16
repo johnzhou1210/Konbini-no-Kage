@@ -9,6 +9,7 @@ public class NPCSpawner : MonoBehaviour
    [SerializeField] private List<GameObject> spawnableNPCs;
    [SerializeField] private Transform spawnPointsContainer;
    [SerializeField] private Transform npcContainer;
+   [SerializeField] private GameObject deadlyStalkerPrefab;
 
    
    private List<Transform> spawnPoints;
@@ -23,11 +24,13 @@ public class NPCSpawner : MonoBehaviour
    private void OnEnable() {
       GameEvents.OnSpawnRandomNPC += SpawnRandomNPC;
       GameEvents.OnClearSpawnedNPCs += ClearSpawnedNPCs;
+      GameEvents.OnSpawnDeadlyStalker += SpawnDeadlyStalker;
    }
 
    private void OnDisable() {
       GameEvents.OnSpawnRandomNPC -= SpawnRandomNPC;
       GameEvents.OnClearSpawnedNPCs -= ClearSpawnedNPCs;
+      GameEvents.OnSpawnDeadlyStalker -= SpawnDeadlyStalker;
    }
 
    public void SpawnRandomNPC(HashSet<CustomerTendency> tendencies = null) {
@@ -46,6 +49,13 @@ public class NPCSpawner : MonoBehaviour
       foreach (Transform child in npcContainer) {
          Destroy(child.gameObject);
       }
+   }
+
+   private void SpawnDeadlyStalker() {
+      GameObject deadlyStalker = Instantiate(deadlyStalkerPrefab, spawnPoints[Random.Range(0,spawnPoints.Count)].position, Quaternion.identity);
+      
+      // deadlyStalker.transform.parent = npcContainer;
+      Debug.LogWarning("Spawned deadly stalker!");
    }
    
    

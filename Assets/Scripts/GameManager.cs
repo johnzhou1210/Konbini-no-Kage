@@ -255,7 +255,7 @@ public class GameManager : MonoBehaviour {
                     new(8, GetRandomCameraStatus()),
                 }
             },{
-                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0,59)), new() {
+                TimeUtils.ConvertToMinutesAfterMidnight(1, Random.Range(0,59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -267,7 +267,7 @@ public class GameManager : MonoBehaviour {
                     new(8, GetRandomCameraStatus()),
                 }
             },{
-                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0,59)), new() {
+                TimeUtils.ConvertToMinutesAfterMidnight(2, Random.Range(0,59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -279,7 +279,7 @@ public class GameManager : MonoBehaviour {
                     new(8, GetRandomCameraStatus()),
                 }
             },{
-                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0,59)), new() {
+                TimeUtils.ConvertToMinutesAfterMidnight(3, Random.Range(0,59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -291,7 +291,7 @@ public class GameManager : MonoBehaviour {
                     new(8, GetRandomCameraStatus()),
                 }
             },{
-                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0,59)), new() {
+                TimeUtils.ConvertToMinutesAfterMidnight(4, Random.Range(0,59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -478,6 +478,8 @@ public class GameManager : MonoBehaviour {
         };
 
         #endregion
+        
+        currNight = SceneData.startingNightNumber;
     }
 
     private void OnEnable() {
@@ -576,7 +578,10 @@ public class GameManager : MonoBehaviour {
             }
 
             if (currNight == 3 && MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(1, 44)) {
-                GameEvents.RaiseOnBreakerBoxTogglePower(false);
+                GameEvents.RaiseOnBreakerBoxCallFlickerThenExtinguish();
+                Invoke(nameof(InvokeSpawnKillingStalker), Random.Range(11,20));
+                
+                Invoke(nameof(DialogInvokeWrapper), 3f);
             }
 
             if (currNightCamChangesDict.ContainsKey(MinutesAfterMidnight)) {
@@ -597,6 +602,8 @@ public class GameManager : MonoBehaviour {
 
             GameEvents.RaiseOnTimeUpdate(MinutesAfterMidnight);
         }
+
+        
 
         // Shift has ended at this point
         string endShiftMessage;
@@ -620,7 +627,7 @@ public class GameManager : MonoBehaviour {
         }
 
         GameEvents.RaiseOnDialogTypewriterStartTypewriter(endShiftMessage, 10f);
-        GameEvents.RaiseOnEndShiftTriggerSetColliderEnabled(true);
+        Invoke(nameof(InvokeEndDayCollider), 10.1f);
         yield return new WaitUntil(() => triggeredEndShift);
         triggeredEndShift = false;
 
@@ -636,6 +643,14 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(DayNightCycle());
     }
 
+    private void InvokeSpawnKillingStalker() {
+        GameEvents.RaiseOnSpawnDeadlyStalker();
+    }
+    
+    private void InvokeEndDayCollider() {
+        GameEvents.RaiseOnEndShiftTriggerSetColliderEnabled(true);
+    }
+    
     private int GetCurrDayOfMonth() { return CurrDayOfMonth; }
 
     private void SetDayOfMonth(int newDate) { CurrDayOfMonth = newDate; }
@@ -644,6 +659,10 @@ public class GameManager : MonoBehaviour {
 
     private void TriggerEndShift() { triggeredEndShift = true; }
 
+    private void DialogInvokeWrapper() {
+        GameEvents.RaiseOnDialogTypewriterStartTypewriter("I heard the circuit breaker... I need to look for the electric breaker box!", 10f);
+    }
+    
     public void ResetGame() {
         currNight = 1;
         CurrDayOfMonth = 9;

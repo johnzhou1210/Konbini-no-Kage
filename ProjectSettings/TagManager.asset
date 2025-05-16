@@ -11,6 +11,10 @@ TagManager:
   - OutsideStarePoints
   - Outage
   - NonOutage
+  - Light
+  - StalkerWanderPoints
+  - PlayerHead
+  - StalkerAngryPoint
   layers:
   - Default
   - TransparentFX

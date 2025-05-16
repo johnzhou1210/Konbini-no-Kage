@@ -126,6 +126,8 @@ public class SecurityCameraManager : MonoBehaviour {
         GameEvents.OnExitSecurityCamera += ExitSecurityCamera;
         GameEvents.OnGenerateRandomizedStalkerTimeSlots += GenerateRandomizedStalkerTimeSlots;
         GameEvents.OnSecurityCamerasSetCameraStatus += SetCamStatus;
+        GameEvents.OnStalkerJumpscare += JumpScare;
+        GameEvents.OnSecurityCamerasSetBrainInstantSwitch += ToggleBrainTransition;
 
         GameQuery.OnGetCurrentSecurityCameraIndex = () => SecurityCameraIndx;
         GameQuery.OnGetIsCheckingCameras = () => CheckingCameras;
@@ -136,6 +138,8 @@ public class SecurityCameraManager : MonoBehaviour {
         GameEvents.OnExitSecurityCamera -= ExitSecurityCamera;
         GameEvents.OnGenerateRandomizedStalkerTimeSlots -= GenerateRandomizedStalkerTimeSlots;
         GameEvents.OnSecurityCamerasSetCameraStatus -= SetCamStatus;
+        GameEvents.OnStalkerJumpscare -= JumpScare;
+        GameEvents.OnSecurityCamerasSetBrainInstantSwitch -= ToggleBrainTransition;
 
         GameQuery.OnGetCurrentSecurityCameraIndex = null;
         GameQuery.OnGetIsCheckingCameras = null;
@@ -315,6 +319,24 @@ public class SecurityCameraManager : MonoBehaviour {
         // Debug.LogWarning("Set cam index " + index + " to " + status + ", " + CameraInfos[index].CineCamObj.transform.parent.name);
     }
 
+    private void JumpScare() {
+        ExitSecurityCamera();
+        PlayerCamInfo.CineCamObj.gameObject.GetComponent<CinemachinePanTilt>().enabled = false;
+        PlayerCineCam.enabled = false;
+    }
+    
+    private void ToggleBrainTransition(bool val) {
+        CinemachineBrain brain = PlayerCamInfo.CineCamObj.gameObject.GetComponent<CinemachineBrain>();
+        if (val) {
+            brain.DefaultBlend =
+                new CinemachineBlendDefinition(CinemachineBlendDefinition.Styles.EaseIn, .5f);
+        } else {
+            brain.DefaultBlend =
+                new CinemachineBlendDefinition(CinemachineBlendDefinition.Styles.Cut, 0f);
+        }
+        
+    }
+    
     public void Reset() {
         ExitSecurityCamera();
         ResetVolumeProfile();

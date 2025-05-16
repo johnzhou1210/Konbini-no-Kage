@@ -3,6 +3,7 @@ using KBCore.Refs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UIHoverable : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     bool hovering = false;
@@ -29,8 +30,13 @@ public class UIHoverable : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
 
     void Update() {
-        hoverableText.text = hovering ? $"> {originalText}" : originalText;
-        hoverableText.color = hovering ? Color.white : originalColor;
+        if (GetComponent<Button>().interactable) {
+            hoverableText.text = hovering ? $"> {originalText}" : originalText;
+            hoverableText.color = hovering ? Color.white : originalColor;
+        } else {
+            hoverableText.color = new Color(50f/255,50f/255,50f/255,1);
+        }
+
     }
 
 }

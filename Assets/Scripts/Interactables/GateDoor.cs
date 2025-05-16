@@ -17,21 +17,30 @@ public class GateDoor : MonoBehaviour, IInteractable {
 
     private void OnEnable() {
         GameEvents.OnSetGateDoorOpened += SetGateOpened;
+        
+        GameQuery.OnGetIsGateOpened = GetGateOpened;
     }
 
     private void OnDisable() {
         GameEvents.OnSetGateDoorOpened -= SetGateOpened;
+        
+        GameQuery.OnGetIsGateOpened = null;
     }
 
     
 
     public void Interact() {
         Debug.Log("Interacted with gate door");
-
+        
         if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) < 3) {
             GameEvents.RaiseOnDialogTypewriterStartTypewriter("No reason to go in here right now.");
         } else {
-            GameEvents.RaiseOnSetGateDoorOpened(!gateOpened);
+            if (GameQuery.OnGetStalkerAngryCutsceneInProgress?.Invoke() ?? false) {
+                GameEvents.RaiseOnDialogTypewriterStartTypewriter("No, that's a death wish!");
+            } else {
+                GameEvents.RaiseOnSetGateDoorOpened(!gateOpened);
+            }
+            
         }
 
     }
@@ -55,5 +64,8 @@ public class GateDoor : MonoBehaviour, IInteractable {
         }
     }
 
+    private bool GetGateOpened() {
+        return gateOpened;
+    }
     
 }

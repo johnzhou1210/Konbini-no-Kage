@@ -28,5 +28,16 @@ public static class GameQuery {
 
    #endregion
 
+   
+   #region Night3SafeZone
+
+   public static Func<bool> OnGetNight3InSafeZone;
+   public static Func<bool> OnGetIsGateOpened;
+   public static Func<bool> OnGetStalkerAngryCutsceneInProgress;
+   public static Func<bool> OnGetIsPlayerCaught;
+
+   #endregion
+
+
 
 }

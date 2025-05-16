@@ -46,6 +46,17 @@ public static class GameEvents {
    public static event Action<int> OnSetActiveCamera;
    public static event Action OnExitSecurityCamera, OnGenerateRandomizedStalkerTimeSlots;
    public static event Action<int, CameraStatus> OnSecurityCamerasSetCameraStatus;
+   public static event Action<bool> OnSecurityCamerasSetBrainInstantSwitch;
+   
+   public static event Action OnStalkerJumpscare;
+
+   public static void RaiseOnSecurityCamerasSetBrainInstantSwitch(bool state) {
+      OnSecurityCamerasSetBrainInstantSwitch?.Invoke(state);
+   }
+   
+   public static void RaiseOnStalkerJumpscare() {
+      OnStalkerJumpscare?.Invoke();
+   }
 
    public static void RaiseOnSecurityCamerasSetCameraStatus(int index, CameraStatus status) {
       OnSecurityCamerasSetCameraStatus?.Invoke(index, status);
@@ -139,6 +150,7 @@ public static class GameEvents {
    #region BreakerBox
 
    public static event Action<bool> OnSetBreakerBoxDoorOpened, OnBreakerBoxTogglePower;
+   public static event Action OnBreakerBoxCallFlickerThenExtinguish;
 
    public static void RaiseOnSetBreakerBoxDoorOpened(bool val) {
       OnSetBreakerBoxDoorOpened?.Invoke(val);
@@ -146,6 +158,10 @@ public static class GameEvents {
 
    public static void RaiseOnBreakerBoxTogglePower(bool val) {
       OnBreakerBoxTogglePower?.Invoke(val);
+   }
+
+   public static void RaiseOnBreakerBoxCallFlickerThenExtinguish() {
+      OnBreakerBoxCallFlickerThenExtinguish?.Invoke();
    }
    
    #region GateDoor
@@ -167,6 +183,51 @@ public static class GameEvents {
 
    public static void RaiseOnKonbiniDoorOpened() {
       OnKonbiniDoorOpened?.Invoke();
+   }
+
+   #endregion
+   
+   
+   #region PlayerInput
+
+   public static event Action OnKillPlayerInput;
+
+   public static void RaiseOnKillPlayerInput() {
+      OnKillPlayerInput?.Invoke();
+   }
+
+   #endregion
+
+   
+   #region Cinematics
+
+   public static event Action OnPlayerFlashRed;
+
+   public static void RaiseOnPlayerFlashRed() {
+      OnPlayerFlashRed?.Invoke();
+   }
+
+   #endregion
+   
+   #region StalkerBehavior
+
+   public static event Action OnStalkerEndChase, OnGameOverShow, OnSpawnDeadlyStalker;
+   public static event Action<bool> OnSetNight3ChaseIntoPlayerInput;
+
+   public static void RaiseOnStalkerEndChase() {
+      OnStalkerEndChase?.Invoke();
+   }
+
+   public static void RaiseSetNight3ChaseIntoPlayerInput(bool val) {
+      OnSetNight3ChaseIntoPlayerInput?.Invoke(val);
+   }
+
+   public static void RaiseOnGameOverShow() {
+      OnGameOverShow?.Invoke();
+   }
+
+   public static void RaiseOnSpawnDeadlyStalker() {
+      OnSpawnDeadlyStalker?.Invoke();
    }
 
    #endregion

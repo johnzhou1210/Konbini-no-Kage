@@ -1,6 +1,7 @@
 using System;
 using KBCore.Refs;
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -17,10 +18,17 @@ public class PlayerInputManager : MonoBehaviour {
     private CinemachineCamera activeCamera;
 
     private bool canInteract = true;
+    
+    
+    #region Night 3
+    private bool night3Chase = false;
+    private float safeZoneTimeElapsedWithoutMoving = 0f;
+    #endregion
 
     public static event Action<string> OnUpdateInteractPrompt;
 
     private Vector3 velocity;
+    private bool playerDead = false;
 
     private void OnValidate() { this.ValidateRefs(); }
 
@@ -30,13 +38,37 @@ public class PlayerInputManager : MonoBehaviour {
     }
 
     private void InitRadius() { characterController.radius = 0.5f; }
-    
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.M)) {
-            Cursor.lockState = CursorLockMode.None;
-            SceneManager.LoadScene(0);
-        }
+
+    private void OnEnable() {
+        GameEvents.OnKillPlayerInput += KillPlayerInput;
+        GameEvents.OnSetNight3ChaseIntoPlayerInput += SetNight3Chase;
         
+        GameQuery.OnGetIsPlayerCaught = () => { return playerDead; };
+    }
+
+    private void OnDisable() {
+        GameEvents.OnKillPlayerInput -= KillPlayerInput;
+        GameEvents.OnSetNight3ChaseIntoPlayerInput -= SetNight3Chase;
+
+        GameQuery.OnGetIsPlayerCaught = null;
+    }
+
+    private void Update() {
+        if (playerDead) return;
+        
+        if (night3Chase) {
+            if ((GameQuery.OnGetNight3InSafeZone?.Invoke() ?? false) && playerInput.actions["Move"].ReadValue<Vector2>().magnitude < 0.5f ) {
+                safeZoneTimeElapsedWithoutMoving += Time.deltaTime;
+            } else {
+                safeZoneTimeElapsedWithoutMoving = 0f;
+            }
+
+            if (safeZoneTimeElapsedWithoutMoving > 5f && !(GameQuery.OnGetIsGateOpened?.Invoke() ?? false) && !playerDead) {
+                GameEvents.RaiseOnStalkerEndChase();
+                night3Chase = false;
+            }
+        }
+   
         Vector2 moveInput = playerInput.actions["Move"].ReadValue<Vector2>();
         if (GameQuery.OnGetIsCheckingCameras?.Invoke() ?? false) {
             if (playerInput.actions["CamLeft"].WasPerformedThisFrame()) {
@@ -105,5 +137,15 @@ public class PlayerInputManager : MonoBehaviour {
     private void ResetInteract() {
         canInteract = true;
     }
+
+    private void KillPlayerInput() {
+        playerDead = true;
+    }
+
+    private void SetNight3Chase(bool val) {
+        night3Chase = val;
+    }
+    
+    
     
 }
