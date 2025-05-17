@@ -58,7 +58,7 @@ public class NPCSpawner : MonoBehaviour
    }
 
    private void SpawnDeadlyStalker(Vector3 pos) {
-      if (pos == default(Vector3)) {
+      if (pos == Vector3.zero) {
          GameObject deadlyStalker = Instantiate(deadlyStalkerPrefab, spawnPoints[Random.Range(0,spawnPoints.Count)].position, Quaternion.identity);
       } else {
          GameObject deadlyStalker = Instantiate(deadlyStalkerPrefab, pos, Quaternion.identity);

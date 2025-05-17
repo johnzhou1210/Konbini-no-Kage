@@ -48,12 +48,16 @@ public static class GameEvents {
 
    #region SecurityCameras
    public static event Action<int> OnSetActiveCamera;
-   public static event Action OnExitSecurityCamera, OnGenerateRandomizedStalkerTimeSlots;
+   public static event Action OnExitSecurityCamera, OnGenerateRandomizedStalkerTimeSlots, OnStartWhisperCoroutine;
    public static event Action<int, CameraStatus> OnSecurityCamerasSetCameraStatus;
    public static event Action<bool> OnSecurityCamerasSetBrainInstantSwitch;
    
    public static event Action OnStalkerJumpscare;
 
+   public static void RaiseOnStartWhisperCoroutine() {
+      OnStartWhisperCoroutine?.Invoke();
+   }
+   
    public static void RaiseOnSecurityCamerasSetBrainInstantSwitch(bool state) {
       OnSecurityCamerasSetBrainInstantSwitch?.Invoke(state);
    }
@@ -236,7 +240,7 @@ public static class GameEvents {
       OnGameOverShow?.Invoke();
    }
 
-   public static void RaiseOnSpawnDeadlyStalker(Vector3 pos = default(Vector3)) {
+   public static void RaiseOnSpawnDeadlyStalker(Vector3 pos) {
       OnSpawnDeadlyStalker?.Invoke(pos);
    }
 

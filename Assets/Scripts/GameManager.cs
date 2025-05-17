@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour {
     private int currNight = 1;
     private bool triggeredEndShift = false;
     
-    
+   
 
     private Dictionary<int, List<(int, CameraStatus)>> night1CamStatusChanges,
         night2CamStatusChanges,
@@ -580,6 +580,15 @@ public class GameManager : MonoBehaviour {
             break;
         }
 
+        if (currNight == 1 || currNight == 2 || currNight == 3) {
+            GetComponent<AudioSource>().Play();
+        }
+        
+        if ( currNight == 4) {
+            GameEvents.RaiseOnStartWhisperCoroutine();
+
+        }
+        
 
         MinutesAfterMidnight = MAMShiftStart[currNight];
         int remainingNPCs = maxNPCsPerNight[currNight];
@@ -621,19 +630,27 @@ public class GameManager : MonoBehaviour {
                 GameEvents.RaiseOnSetDayOfMonth(CurrDayOfMonth);
             }
 
+            
+            
             if (currNight == 2 && (MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(2, 0)) ||
                 MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(3, 19)) {
                 GameEvents.RaiseOnKonbiniDoorOpened();
+                GetComponent<AudioSource>().Pause();
+                Invoke(nameof(ResumeMusic), 8f);
             }
 
             if (currNight == 3 && MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(1, 44)) {
                 GameEvents.RaiseOnBreakerBoxCallFlickerThenExtinguish();
+                GetComponent<AudioSource>().Stop();
+                
                 Invoke(nameof(InvokeSpawnKillingStalker), Random.Range(11, 20));
+                
 
                 Invoke(nameof(DialogInvokeWrapper), 3f);
             }
 
             if (currNight == 4) {
+                
                 if (Random.Range(0f, 1f) < .01f) {
                     GameEvents.RaiseOnBreakerBoxCallFlicker(Random.Range(1, 5));
                 }
@@ -704,7 +721,7 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(DayNightCycle());
     }
 
-    private void InvokeSpawnKillingStalker(Vector3 pos) { GameEvents.RaiseOnSpawnDeadlyStalker(pos); }
+    private void InvokeSpawnKillingStalker() { GameEvents.RaiseOnSpawnDeadlyStalker(Vector3.zero); }
 
     private void InvokeEndDayCollider() { GameEvents.RaiseOnEndShiftTriggerSetColliderEnabled(true); }
 
@@ -718,7 +735,7 @@ public class GameManager : MonoBehaviour {
         triggeredEndShift = true;
         if (currNight == 4) {
             GameEvents.RaiseOnBreakerBoxCallFlickerThenExtinguish();
-            InvokeSpawnKillingStalker(new Vector3(2.34669995f,1.19200003f,1.42999995f));
+            GameEvents.RaiseOnSpawnDeadlyStalker(new Vector3(2.34669995f,1.19200003f,1.42999995f));
         }
         
     }
@@ -742,6 +759,10 @@ public class GameManager : MonoBehaviour {
 
     private void EnablePoliceCar() {
         policeCar.SetActive(true);
+    }
+
+    private void ResumeMusic() {
+        GetComponent<AudioSource>().UnPause();
     }
     
 }

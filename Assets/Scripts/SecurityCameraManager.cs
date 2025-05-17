@@ -132,6 +132,7 @@ public class SecurityCameraManager : MonoBehaviour {
         GameEvents.OnSecurityCamerasSetCameraStatus += SetCamStatus;
         GameEvents.OnStalkerJumpscare += JumpScare;
         GameEvents.OnSecurityCamerasSetBrainInstantSwitch += ToggleBrainTransition;
+        GameEvents.OnStartWhisperCoroutine += StartWhisperCoroutine;
 
         GameQuery.OnGetCurrentSecurityCameraIndex = () => SecurityCameraIndx;
         GameQuery.OnGetIsCheckingCameras = () => CheckingCameras;
@@ -144,6 +145,7 @@ public class SecurityCameraManager : MonoBehaviour {
         GameEvents.OnSecurityCamerasSetCameraStatus -= SetCamStatus;
         GameEvents.OnStalkerJumpscare -= JumpScare;
         GameEvents.OnSecurityCamerasSetBrainInstantSwitch -= ToggleBrainTransition;
+        GameEvents.OnStartWhisperCoroutine -= StartWhisperCoroutine;
 
         GameQuery.OnGetCurrentSecurityCameraIndex = null;
         GameQuery.OnGetIsCheckingCameras = null;
@@ -172,10 +174,6 @@ public class SecurityCameraManager : MonoBehaviour {
 
     private void Start() {
         InitializeCamInfos();
-        if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) == 4) {
-            stalkerWhisperCoroutine = StartCoroutine(StalkerWhisperCoroutine());
-            StartCoroutine(WhisperChangeBinaural());
-        }
     }
 
     private IEnumerator WhisperChangeBinaural() {
@@ -382,6 +380,11 @@ public class SecurityCameraManager : MonoBehaviour {
         ExitSecurityCamera();
         ResetVolumeProfile();
         SecurityCameraIndx = 0;
+    }
+
+    private void StartWhisperCoroutine() {
+        stalkerWhisperCoroutine = StartCoroutine(StalkerWhisperCoroutine());
+        StartCoroutine(WhisperChangeBinaural());
     }
     
 }
