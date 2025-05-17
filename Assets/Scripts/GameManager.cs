@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour {
@@ -597,16 +598,16 @@ public class GameManager : MonoBehaviour {
 
             switch (currNight) {
                 case 1:
-                    irlSecondsInAMinute = .5f;
+                    irlSecondsInAMinute = .4f;
                 break;
                 case 2:
-                    irlSecondsInAMinute = .5f;
+                    irlSecondsInAMinute = .4f;
                 break;
                 case 3:
-                    irlSecondsInAMinute = .75f;
+                    irlSecondsInAMinute = .6f;
                 break;
                 case 4:
-                    irlSecondsInAMinute = .75f;
+                    irlSecondsInAMinute = .6f;
                 break;
             }
             
@@ -718,7 +719,10 @@ public class GameManager : MonoBehaviour {
         GameEvents.RaiseOnCounterItemDisplayClearItems();
         GameEvents.RaiseOnLineupManagerClearItems();
         GameEvents.RaiseOnResetCustomerItem();
-        StartCoroutine(DayNightCycle());
+
+        SceneData.startingNightNumber += 1;
+        SceneManager.LoadScene(1);
+        
     }
 
     private void InvokeSpawnKillingStalker() { GameEvents.RaiseOnSpawnDeadlyStalker(Vector3.zero); }
