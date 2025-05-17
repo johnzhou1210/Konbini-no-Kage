@@ -10,7 +10,7 @@ public class CinematicListener : MonoBehaviour
     private Coroutine flashRoutine;
     [SerializeField] private Image flashImage;
     [SerializeField] private Color flashColor = new Color(1f, 0f, 0f, 0.6f);
-    [SerializeField] private GameObject gameOverPanel, gameManager;
+    [SerializeField] private GameObject gameOverPanel, gameManager, winScreen;
     private void OnValidate() {
         this.ValidateRefs();
     }
@@ -19,12 +19,14 @@ public class CinematicListener : MonoBehaviour
         GameEvents.OnNightUpdate += PlayCinematicAnimation;
         GameEvents.OnPlayerFlashRed += PlayerFlashRed;
         GameEvents.OnGameOverShow += InvokeShowGameOver;
+        GameEvents.OnShowWinScreen += ShowWinScreen;
     }
 
     private void OnDisable() {
         GameEvents.OnNightUpdate -= PlayCinematicAnimation;
         GameEvents.OnPlayerFlashRed -= PlayerFlashRed;
         GameEvents.OnGameOverShow -= InvokeShowGameOver;
+        GameEvents.OnShowWinScreen -= ShowWinScreen;
     }
 
     private void PlayCinematicAnimation(int night) {
@@ -65,6 +67,10 @@ public class CinematicListener : MonoBehaviour
         flashImage.color = Color.clear;
         gameOverPanel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void ShowWinScreen() {
+        winScreen.SetActive(true);
     }
 
 }

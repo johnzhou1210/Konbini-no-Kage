@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 public enum CameraStatus {
     NORMAL,
@@ -88,6 +90,9 @@ public class SecurityCameraManager : MonoBehaviour {
     private List<TimeRange> stalkerNight4TimeSlots = new();
     private List<(int start, int end)> randomizedSlots;
 
+    [SerializeField] private AudioClip[] whisperTracks;
+    private Coroutine stalkerWhisperCoroutine;
+    
     private void Awake() {
         stalkerNight1TimeSlots = new List<TimeRange> {
             new(TimeUtils.ConvertToMinutesAfterMidnight(22, 30), TimeUtils.ConvertToMinutesAfterMidnight(0, 0), 10),
@@ -114,10 +119,9 @@ public class SecurityCameraManager : MonoBehaviour {
             new(TimeUtils.ConvertToMinutesAfterMidnight(1, 0), TimeUtils.ConvertToMinutesAfterMidnight(1, 5), 5),
         };
         stalkerNight4TimeSlots = new List<TimeRange> {
-            new(TimeUtils.ConvertToMinutesAfterMidnight(22, 30), TimeUtils.ConvertToMinutesAfterMidnight(23, 0), 10),
-            new(TimeUtils.ConvertToMinutesAfterMidnight(23, 0), TimeUtils.ConvertToMinutesAfterMidnight(0, 0), 15),
-            new(TimeUtils.ConvertToMinutesAfterMidnight(0, 0), TimeUtils.ConvertToMinutesAfterMidnight(1, 0), 15),
-            new(TimeUtils.ConvertToMinutesAfterMidnight(1, 0), TimeUtils.ConvertToMinutesAfterMidnight(2, 0), 15),
+            new(TimeUtils.ConvertToMinutesAfterMidnight(22, 0), TimeUtils.ConvertToMinutesAfterMidnight(0, 59), 0),
+            new(TimeUtils.ConvertToMinutesAfterMidnight(1, 0), TimeUtils.ConvertToMinutesAfterMidnight(4, 0), 0),
+            new(TimeUtils.ConvertToMinutesAfterMidnight(4, 1), TimeUtils.ConvertToMinutesAfterMidnight(5, 1), 0),
         };
     }
 
@@ -166,7 +170,44 @@ public class SecurityCameraManager : MonoBehaviour {
         print("finish init");
     }
 
-    private void Start() { InitializeCamInfos(); }
+    private void Start() {
+        InitializeCamInfos();
+        if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) == 4) {
+            stalkerWhisperCoroutine = StartCoroutine(StalkerWhisperCoroutine());
+            StartCoroutine(WhisperChangeBinaural());
+        }
+    }
+
+    private IEnumerator WhisperChangeBinaural() {
+        AudioSource audioSource = GetComponent<AudioSource>();
+        while (true) {
+            yield return new WaitForSeconds(Random.Range(0.1f, 1.1f));
+            audioSource.panStereo = Random.Range(-1f, 1f);
+        }
+        yield return null;
+    }
+    
+    private IEnumerator StalkerWhisperCoroutine() {
+        AudioSource audioSource = GetComponent<AudioSource>();
+        AudioReverbZone reverbZone = GetComponent<AudioReverbZone>();
+        while (true) {
+            yield return null;
+            reverbZone.enabled = false;
+            audioSource.volume = 0f;
+            if (!(GameQuery.OnGetNight4InStoreTrigger?.Invoke() ?? false)) continue;
+            if (!CheckingCameras) continue;
+
+            reverbZone.enabled = true;
+            audioSource.volume = 1f;
+            audioSource.resource = whisperTracks[UnityEngine.Random.Range(0, whisperTracks.Length)];
+            audioSource.Play();
+            yield return new WaitUntil(() => !audioSource.isPlaying || !CheckingCameras );
+            
+
+        }
+        yield return null;
+    }
+    
 
     public void SetActiveCamera(CameraInfo camInfo) {
         GameObject.FindWithTag("MainCamera").GetComponent<CinemachineInputAxisController>().enabled = false;
@@ -342,4 +383,5 @@ public class SecurityCameraManager : MonoBehaviour {
         ResetVolumeProfile();
         SecurityCameraIndx = 0;
     }
+    
 }

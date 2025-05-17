@@ -9,8 +9,10 @@ public class NPCSpawner : MonoBehaviour
    [SerializeField] private List<GameObject> spawnableNPCs;
    [SerializeField] private Transform spawnPointsContainer;
    [SerializeField] private Transform npcContainer;
-   [SerializeField] private GameObject deadlyStalkerPrefab;
+   [SerializeField] private GameObject deadlyStalkerPrefab, customerStalkerPrefab;
 
+
+   private CustomerBehavior customerStalker;
    
    private List<Transform> spawnPoints;
 
@@ -25,12 +27,16 @@ public class NPCSpawner : MonoBehaviour
       GameEvents.OnSpawnRandomNPC += SpawnRandomNPC;
       GameEvents.OnClearSpawnedNPCs += ClearSpawnedNPCs;
       GameEvents.OnSpawnDeadlyStalker += SpawnDeadlyStalker;
+      GameEvents.OnSpawnStalkerCustomer += SpawnStalkerCustomer;
+      GameEvents.OnNight4StalkerLeave += InitiateNight4StalkerLeave;
    }
 
    private void OnDisable() {
       GameEvents.OnSpawnRandomNPC -= SpawnRandomNPC;
       GameEvents.OnClearSpawnedNPCs -= ClearSpawnedNPCs;
       GameEvents.OnSpawnDeadlyStalker -= SpawnDeadlyStalker;
+      GameEvents.OnSpawnStalkerCustomer -= SpawnStalkerCustomer;
+      GameEvents.OnNight4StalkerLeave -= InitiateNight4StalkerLeave;
    }
 
    public void SpawnRandomNPC(HashSet<CustomerTendency> tendencies = null) {
@@ -51,11 +57,25 @@ public class NPCSpawner : MonoBehaviour
       }
    }
 
-   private void SpawnDeadlyStalker() {
-      GameObject deadlyStalker = Instantiate(deadlyStalkerPrefab, spawnPoints[Random.Range(0,spawnPoints.Count)].position, Quaternion.identity);
+   private void SpawnDeadlyStalker(Vector3 pos) {
+      if (pos == default(Vector3)) {
+         GameObject deadlyStalker = Instantiate(deadlyStalkerPrefab, spawnPoints[Random.Range(0,spawnPoints.Count)].position, Quaternion.identity);
+      } else {
+         GameObject deadlyStalker = Instantiate(deadlyStalkerPrefab, pos, Quaternion.identity);
+      }
       
-      // deadlyStalker.transform.parent = npcContainer;
       Debug.LogWarning("Spawned deadly stalker!");
+   }
+
+   private void SpawnStalkerCustomer() {
+      GameObject customerStalkerGO = Instantiate(customerStalkerPrefab,
+         spawnPoints[Random.Range(0, spawnPoints.Count)].position, Quaternion.identity);
+      customerStalker = customerStalkerGO.GetComponent<CustomerBehavior>();
+      Debug.LogWarning("Spawned customer stalker!");
+   }
+
+   private void InitiateNight4StalkerLeave() {
+      customerStalker.InitiateLeave();
    }
    
    

@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 
 public static class SceneData
 {
-   public static int highestNightNumber = 3;
-   public static int startingNightNumber = 3;
+   public static int highestNightNumber = 1;
+   public static int startingNightNumber = 1;
 }
 
 

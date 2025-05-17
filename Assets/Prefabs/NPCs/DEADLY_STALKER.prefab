@@ -2438,7 +2438,7 @@ MonoBehaviour:
   animator: {fileID: 5029861481507808805}
   target: {fileID: 0}
   minWait: 3
-  maxWait: 8
+  maxWait: 5
   targetStopRadius: 1.5
   plasticBag: {fileID: 8651788333556062158}
   knife: {fileID: 3905631869948005586}
@@ -2449,7 +2449,7 @@ MonoBehaviour:
   jumpscareFace: {fileID: 1940389729482154327}
   angryFace: {fileID: 1242527316880137605}
   jumpscareCamObj: {fileID: 2674180454472074168}
-  chaseDistance: 10
+  chaseDistance: 8
   ReachedFront: 0
 --- !u!65 &3040882424506077142
 BoxCollider:

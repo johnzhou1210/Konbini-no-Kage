@@ -38,6 +38,10 @@ public static class GameQuery {
 
    #endregion
 
+   #region Night4StalkerInStoreTrigger
+   public static Func<bool> OnGetNight4InStoreTrigger;
+   
+   #endregion
 
 
 }

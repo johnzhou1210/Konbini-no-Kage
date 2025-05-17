@@ -5,7 +5,7 @@ using UnityEngine;
 public static class GameEvents {
    
    #region NPCs
-   public static event Action OnClearSpawnedNPCs;
+   public static event Action OnClearSpawnedNPCs, OnSpawnStalkerCustomer;
    public static event Action<CustomerTendency> OnSetCustomerTendency;
    public static event Action<HashSet<CustomerTendency>> OnSpawnRandomNPC;
    public static void RaiseOnSpawnRandomNPC(HashSet<CustomerTendency> customerTendency = null) {
@@ -14,6 +14,10 @@ public static class GameEvents {
 
    public static void RaiseOnClearSpawnedNPCs() {
       OnClearSpawnedNPCs?.Invoke();
+   }
+
+   public static void RaiseOnSpawnStalkerCustomer() {
+      OnSpawnStalkerCustomer?.Invoke();
    }
 
    public static void RaiseOnSetCustomerTendency(CustomerTendency newTendency) {
@@ -151,6 +155,7 @@ public static class GameEvents {
 
    public static event Action<bool> OnSetBreakerBoxDoorOpened, OnBreakerBoxTogglePower;
    public static event Action OnBreakerBoxCallFlickerThenExtinguish;
+   public static event Action<int> OnBreakerBoxCallFlicker;
 
    public static void RaiseOnSetBreakerBoxDoorOpened(bool val) {
       OnSetBreakerBoxDoorOpened?.Invoke(val);
@@ -162,6 +167,10 @@ public static class GameEvents {
 
    public static void RaiseOnBreakerBoxCallFlickerThenExtinguish() {
       OnBreakerBoxCallFlickerThenExtinguish?.Invoke();
+   }
+
+   public static void RaiseOnBreakerBoxCallFlicker(int flickers) {
+      OnBreakerBoxCallFlicker?.Invoke(flickers);
    }
    
    #region GateDoor
@@ -211,7 +220,8 @@ public static class GameEvents {
    
    #region StalkerBehavior
 
-   public static event Action OnStalkerEndChase, OnGameOverShow, OnSpawnDeadlyStalker;
+   public static event Action OnStalkerEndChase, OnGameOverShow, OnNight4StalkerLeave;
+   public static event Action<Vector3> OnSpawnDeadlyStalker;
    public static event Action<bool> OnSetNight3ChaseIntoPlayerInput;
 
    public static void RaiseOnStalkerEndChase() {
@@ -226,8 +236,32 @@ public static class GameEvents {
       OnGameOverShow?.Invoke();
    }
 
-   public static void RaiseOnSpawnDeadlyStalker() {
-      OnSpawnDeadlyStalker?.Invoke();
+   public static void RaiseOnSpawnDeadlyStalker(Vector3 pos = default(Vector3)) {
+      OnSpawnDeadlyStalker?.Invoke(pos);
+   }
+
+   public static void RaiseOnNight4StalkerLeave() {
+      OnNight4StalkerLeave?.Invoke();
+   }
+   
+   #endregion
+   
+   #region PoliceCar
+
+   public static event Action OnPoliceCarEnter;
+
+   public static void RaiseOnPoliceCarEnter() {
+      OnPoliceCarEnter?.Invoke();
+   }
+
+   #endregion
+
+   #region WinScreen
+
+   public static event Action OnShowWinScreen;
+
+   public static void RaiseOnShowWinScreen() {
+      OnShowWinScreen?.Invoke();
    }
 
    #endregion

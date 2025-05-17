@@ -75,7 +75,8 @@ public class CustomerBehavior : MonoBehaviour {
     private Vector3 targetPos;
 
     private GameObject player;
-
+    
+    
     private void OnValidate() { this.ValidateRefs(); }
 
 

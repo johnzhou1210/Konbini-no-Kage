@@ -23,11 +23,13 @@ public class BreakerBox : MonoBehaviour, IInteractable
     private void OnEnable() {
         GameEvents.OnBreakerBoxTogglePower += SetLightsEnabled;
         GameEvents.OnBreakerBoxCallFlickerThenExtinguish += CallFlickerThenExtinguish;
+        GameEvents.OnBreakerBoxCallFlicker += CallFlicker;
     }
 
     private void OnDisable() {
         GameEvents.OnBreakerBoxTogglePower -= SetLightsEnabled;
         GameEvents.OnBreakerBoxCallFlickerThenExtinguish -= CallFlickerThenExtinguish;
+        GameEvents.OnBreakerBoxCallFlicker -= CallFlicker;
         if (flickerCoroutine != null) {
             StopCoroutine(flickerCoroutine);
             flickerCoroutine = null;
@@ -60,6 +62,16 @@ public class BreakerBox : MonoBehaviour, IInteractable
         yield return null;
     }
     
+    private IEnumerator Flicker(int flickers) {
+        for (int i = 0; i < flickers; i++) {
+            SetAllLightsActive(false);
+            yield return new WaitForSeconds(Random.Range(0.1f,0.5f));
+            SetAllLightsActive(true);
+            yield return new WaitForSeconds(Random.Range(0.1f,0.5f));
+        }
+        SetAllLightsActive(lightsOn);
+    }
+    
 
     private void SetLightsEnabled(bool val) {
         audioSource.pitch = Random.Range(0.8f, 1.2f);
@@ -84,6 +96,15 @@ public class BreakerBox : MonoBehaviour, IInteractable
     private void CallFlickerThenExtinguish() {
         flickerCoroutine = StartCoroutine(FlickerThenExtinguish());
     }
+
+    private void CallFlicker(int flickers) {
+        if (flickerCoroutine != null) {
+            StopCoroutine(flickerCoroutine);
+            flickerCoroutine = null;
+        }
+
+        flickerCoroutine = StartCoroutine(Flicker(flickers));
+    }
     
     private void SetAllLightsActive(bool val) {
         foreach (GameObject outageGO in outageGOs) {
@@ -95,6 +116,8 @@ public class BreakerBox : MonoBehaviour, IInteractable
         }
         
     }
+    
+    
     
     
     

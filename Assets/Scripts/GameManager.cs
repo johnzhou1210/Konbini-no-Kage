@@ -12,12 +12,17 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField] private List<CustomerTendencyGroup> abnormalCustomers = new();
     [SerializeField] public Dictionary<int, int> MAMShiftStart, MAMShiftEnd;
+    [SerializeField] private GameObject policeCar;
     private Dictionary<int, int> maxNPCsPerNight;
 
+    // declare variable leave by exact time
+    private int night4StalkerLeaveTime = TimeUtils.ConvertToMinutesAfterMidnight(4,0);
 
     private float spawnChance;
     private int currNight = 1;
     private bool triggeredEndShift = false;
+    
+    
 
     private Dictionary<int, List<(int, CameraStatus)>> night1CamStatusChanges,
         night2CamStatusChanges,
@@ -30,7 +35,7 @@ public class GameManager : MonoBehaviour {
         // Night 1
         abnormalCustomers.Add(new CustomerTendencyGroup(new List<CustomerTendencyEntry> {
             new CustomerTendencyEntry(
-                new(){CustomerTendency.VARIEDSPEED},
+                new() { CustomerTendency.VARIEDSPEED },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 3), Random.Range(0, 59))
             )
         }));
@@ -38,76 +43,99 @@ public class GameManager : MonoBehaviour {
         // Night 2
         abnormalCustomers.Add(new CustomerTendencyGroup(new List<CustomerTendencyEntry> {
             new CustomerTendencyEntry(
-                new(){CustomerTendency.OBSESSIVE},
+                new() { CustomerTendency.OBSESSIVE },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 3), Random.Range(0, 59))
             ),
             new CustomerTendencyEntry(
-                new(){CustomerTendency.SIDEDOOR},
+                new() { CustomerTendency.SIDEDOOR },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 3), Random.Range(0, 59))
             )
         }));
-        
+
         // Night 3
         abnormalCustomers.Add(new CustomerTendencyGroup(new List<CustomerTendencyEntry> {
             new CustomerTendencyEntry(
-                new(){CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE,CustomerTendency.VARIEDSPEED},
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE, CustomerTendency.VARIEDSPEED },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 3), Random.Range(0, 59))
             ),
             new CustomerTendencyEntry(
-                new(){CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE, CustomerTendency.VARIEDSPEED},
+                new() {
+                    CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
+                    CustomerTendency.VARIEDSPEED
+                },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(3, 4), Random.Range(0, 30))
             ),
             new CustomerTendencyEntry(
-            new(){CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE, CustomerTendency.VARIEDSPEED},
-            TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(3, 4), Random.Range(0, 30))
-        )
+                new() {
+                    CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
+                    CustomerTendency.VARIEDSPEED
+                },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(3, 4), Random.Range(0, 30))
+            )
         }));
-        
+
         // Night 4
         abnormalCustomers.Add(new CustomerTendencyGroup(new List<CustomerTendencyEntry> {
             new CustomerTendencyEntry(
-                new(){CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE},
-                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
-            ),new CustomerTendencyEntry(
-                new(){CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE},
-                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
-            ),new CustomerTendencyEntry(
-                new(){CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE},
-                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
-            ),new CustomerTendencyEntry(
-                new(){CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE},
-                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
-            ),new CustomerTendencyEntry(
-                new(){CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE},
-                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
-            ),new CustomerTendencyEntry(
-                new(){CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE},
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
             ),
             new CustomerTendencyEntry(
-                new() { CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE, CustomerTendency.VARIEDSPEED},
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() {
+                    CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
+                    CustomerTendency.VARIEDSPEED
+                },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(15, 59))
             ),
             new CustomerTendencyEntry(
-                new() { CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE, CustomerTendency.VARIEDSPEED},
+                new() {
+                    CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
+                    CustomerTendency.VARIEDSPEED
+                },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(15, 59))
             ),
             new CustomerTendencyEntry(
-                new() { CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE, CustomerTendency.VARIEDSPEED},
+                new() {
+                    CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
+                    CustomerTendency.VARIEDSPEED
+                },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(15, 59))
             ),
             new CustomerTendencyEntry(
-                new() { CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE, CustomerTendency.VARIEDSPEED},
+                new() {
+                    CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
+                    CustomerTendency.VARIEDSPEED
+                },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(15, 59))
             ),
             new CustomerTendencyEntry(
-                new() { CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE, CustomerTendency.VARIEDSPEED},
+                new() {
+                    CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
+                    CustomerTendency.VARIEDSPEED
+                },
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(15, 59))
             ),
-            
         }));
-        
-      
 
         #endregion
 
@@ -219,7 +247,7 @@ public class GameManager : MonoBehaviour {
 
         night3CamStatusChanges = new Dictionary<int, List<(int, CameraStatus)>> {
             {
-                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0,59)), new() {
+                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -230,8 +258,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(23, Random.Range(0,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(23, Random.Range(0, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -242,8 +270,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(0, Random.Range(0,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(0, Random.Range(0, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -254,8 +282,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(1, Random.Range(0,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(1, Random.Range(0, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -266,8 +294,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(2, Random.Range(0,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(2, Random.Range(0, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -278,8 +306,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(3, Random.Range(0,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(3, Random.Range(0, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -290,8 +318,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(4, Random.Range(0,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(4, Random.Range(0, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -307,7 +335,7 @@ public class GameManager : MonoBehaviour {
 
         night4CamStatusChanges = new Dictionary<int, List<(int, CameraStatus)>> {
             {
-                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0,29)), new() {
+                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(0, 29)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -318,8 +346,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(30,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(22, Random.Range(30, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -330,8 +358,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(23, Random.Range(0,29)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(23, Random.Range(0, 29)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -342,8 +370,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(23, Random.Range(30,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(23, Random.Range(30, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -354,8 +382,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(0, Random.Range(0,29)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(0, Random.Range(0, 29)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -366,8 +394,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(0, Random.Range(30,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(0, Random.Range(30, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -378,8 +406,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(1, Random.Range(0,29)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(1, Random.Range(0, 29)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -390,8 +418,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(1, Random.Range(30,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(1, Random.Range(30, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -402,8 +430,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(2, Random.Range(0,29)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(2, Random.Range(0, 29)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -414,8 +442,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(2, Random.Range(30,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(2, Random.Range(30, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -426,8 +454,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(3, Random.Range(0,29)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(3, Random.Range(0, 29)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -438,8 +466,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(3, Random.Range(30,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(3, Random.Range(30, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -450,8 +478,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(4, Random.Range(0,29)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(4, Random.Range(0, 29)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -462,8 +490,8 @@ public class GameManager : MonoBehaviour {
                     new(7, GetRandomCameraStatus()),
                     new(8, GetRandomCameraStatus()),
                 }
-            },{
-                TimeUtils.ConvertToMinutesAfterMidnight(4, Random.Range(30,59)), new() {
+            }, {
+                TimeUtils.ConvertToMinutesAfterMidnight(4, Random.Range(30, 59)), new() {
                     new(0, GetRandomCameraStatus()),
                     new(1, GetRandomCameraStatus()),
                     new(2, GetRandomCameraStatus()),
@@ -478,14 +506,16 @@ public class GameManager : MonoBehaviour {
         };
 
         #endregion
-        
+
         currNight = SceneData.startingNightNumber;
+        CurrDayOfMonth = CurrDayOfMonth + currNight;
     }
 
     private void OnEnable() {
         GameEvents.OnSetDayOfMonth += SetDayOfMonth;
         GameEvents.OnNightUpdate += SetCurrNight;
         GameEvents.OnTriggerEndShift += TriggerEndShift;
+        GameEvents.OnPoliceCarEnter += EnablePoliceCar;
 
         GameQuery.OnGetCurrentDayOfMonth = GetCurrDayOfMonth;
         GameQuery.OnGetCurrentNight = () => currNight;
@@ -496,6 +526,7 @@ public class GameManager : MonoBehaviour {
         GameEvents.OnSetDayOfMonth -= SetDayOfMonth;
         GameEvents.OnNightUpdate -= SetCurrNight;
         GameEvents.OnTriggerEndShift -= TriggerEndShift;
+        GameEvents.OnPoliceCarEnter -= EnablePoliceCar;
 
         GameQuery.OnGetCurrentDayOfMonth = null;
         GameQuery.OnGetCurrentNight = null;
@@ -553,7 +584,24 @@ public class GameManager : MonoBehaviour {
         MinutesAfterMidnight = MAMShiftStart[currNight];
         int remainingNPCs = maxNPCsPerNight[currNight];
         while (MinutesAfterMidnight != MAMShiftEnd[currNight]) {
-            yield return new WaitForSeconds(.25f);
+            float irlSecondsInAMinute = .5f;
+
+            switch (currNight) {
+                case 1:
+                    irlSecondsInAMinute = .5f;
+                break;
+                case 2:
+                    irlSecondsInAMinute = .5f;
+                break;
+                case 3:
+                    irlSecondsInAMinute = .75f;
+                break;
+                case 4:
+                    irlSecondsInAMinute = .75f;
+                break;
+            }
+            
+            yield return new WaitForSeconds(irlSecondsInAMinute);
 
             if (remainingNPCs > 0) {
                 int totalMinutesInDay = 1440;
@@ -573,15 +621,31 @@ public class GameManager : MonoBehaviour {
                 GameEvents.RaiseOnSetDayOfMonth(CurrDayOfMonth);
             }
 
-            if (currNight == 2 && (MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(2, 0)) || MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(3,19)) {
+            if (currNight == 2 && (MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(2, 0)) ||
+                MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(3, 19)) {
                 GameEvents.RaiseOnKonbiniDoorOpened();
             }
 
             if (currNight == 3 && MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(1, 44)) {
                 GameEvents.RaiseOnBreakerBoxCallFlickerThenExtinguish();
-                Invoke(nameof(InvokeSpawnKillingStalker), Random.Range(11,20));
-                
+                Invoke(nameof(InvokeSpawnKillingStalker), Random.Range(11, 20));
+
                 Invoke(nameof(DialogInvokeWrapper), 3f);
+            }
+
+            if (currNight == 4) {
+                if (Random.Range(0f, 1f) < .01f) {
+                    GameEvents.RaiseOnBreakerBoxCallFlicker(Random.Range(1, 5));
+                }
+
+                if (MinutesAfterMidnight == TimeUtils.ConvertToMinutesAfterMidnight(1, 0)) {
+                    GameEvents.RaiseOnSpawnStalkerCustomer();
+                }
+
+                if (MinutesAfterMidnight == night4StalkerLeaveTime) {
+                    GameEvents.RaiseOnNight4StalkerLeave();
+                }
+                
             }
 
             if (currNightCamChangesDict.ContainsKey(MinutesAfterMidnight)) {
@@ -591,19 +655,16 @@ public class GameManager : MonoBehaviour {
                 }
             }
 
-            foreach (CustomerTendencyEntry entry in abnormalCustomers[currNight-1].Tendencies) {
+            foreach (CustomerTendencyEntry entry in abnormalCustomers[currNight - 1].Tendencies) {
                 if (MinutesAfterMidnight == entry.Time) {
                     GameEvents.RaiseOnSpawnRandomNPC(entry.Types);
                 }
             }
 
-            
-            
 
             GameEvents.RaiseOnTimeUpdate(MinutesAfterMidnight);
         }
 
-        
 
         // Shift has ended at this point
         string endShiftMessage;
@@ -643,26 +704,30 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(DayNightCycle());
     }
 
-    private void InvokeSpawnKillingStalker() {
-        GameEvents.RaiseOnSpawnDeadlyStalker();
-    }
-    
-    private void InvokeEndDayCollider() {
-        GameEvents.RaiseOnEndShiftTriggerSetColliderEnabled(true);
-    }
-    
+    private void InvokeSpawnKillingStalker(Vector3 pos) { GameEvents.RaiseOnSpawnDeadlyStalker(pos); }
+
+    private void InvokeEndDayCollider() { GameEvents.RaiseOnEndShiftTriggerSetColliderEnabled(true); }
+
     private int GetCurrDayOfMonth() { return CurrDayOfMonth; }
 
     private void SetDayOfMonth(int newDate) { CurrDayOfMonth = newDate; }
 
     private void SetCurrNight(int newNight) { currNight = newNight; }
 
-    private void TriggerEndShift() { triggeredEndShift = true; }
+    private void TriggerEndShift() {
+        triggeredEndShift = true;
+        if (currNight == 4) {
+            GameEvents.RaiseOnBreakerBoxCallFlickerThenExtinguish();
+            InvokeSpawnKillingStalker(new Vector3(2.34669995f,1.19200003f,1.42999995f));
+        }
+        
+    }
 
     private void DialogInvokeWrapper() {
-        GameEvents.RaiseOnDialogTypewriterStartTypewriter("I heard the circuit breaker... I need to look for the electric breaker box!", 10f);
+        GameEvents.RaiseOnDialogTypewriterStartTypewriter(
+            "I heard the circuit breaker... I need to look for the electric breaker box!", 10f);
     }
-    
+
     public void ResetGame() {
         currNight = 1;
         CurrDayOfMonth = 9;
@@ -674,4 +739,9 @@ public class GameManager : MonoBehaviour {
         // return (CameraStatus)values.GetValue(Random.Range(0, values.Length - 1)); // exclude NONE enum
         return (CameraStatus)values.GetValue(UnityEngine.Random.Range(0, 4));
     }
+
+    private void EnablePoliceCar() {
+        policeCar.SetActive(true);
+    }
+    
 }

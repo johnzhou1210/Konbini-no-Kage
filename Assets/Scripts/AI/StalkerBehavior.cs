@@ -28,9 +28,7 @@ public class StalkerBehavior : MonoBehaviour {
     [SerializeField] private GameObject jumpscareCamObj;
     [SerializeField] private float chaseDistance = 8f;
     
-
-
-    public bool ReachedFront = false;
+    
     private bool caughtPlayer = false;
     private bool angryCutsceneInProgress = false;
 
@@ -148,7 +146,11 @@ public class StalkerBehavior : MonoBehaviour {
         yield return new WaitUntil(() => Vector3.Distance(transform.position, GameObject.FindWithTag("StalkerAngryPoint").transform.position) < 1f);
         
         animator.Play("Idle");
-        
+
+        if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) == 4) {
+            GameEvents.RaiseOnPoliceCarEnter();
+        }
+
         weirdStare = true;
         yield return new WaitForSeconds(3f);
         normalFace.SetActive(false);
@@ -157,20 +159,27 @@ public class StalkerBehavior : MonoBehaviour {
 
         yield return new WaitForSeconds(2f);
         
-        animator.Play("Run");
         
-        agent.SetDestination(vanishingPoints[Random.Range(0, vanishingPoints.Count)].position);
+        if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) != 4) {
+            animator.Play("Run");
+            agent.SetDestination(vanishingPoints[Random.Range(0, vanishingPoints.Count)].position);
 
-        yield return new WaitForSeconds(5f);
-        angryCutsceneInProgress = false;
+            yield return new WaitForSeconds(5f);
+            angryCutsceneInProgress = false;
         
-        yield return new WaitUntil(() => Vector3.Distance(transform.position, targetPos) < 1f);
-        animator.Play("Run");
+            yield return new WaitUntil(() => Vector3.Distance(transform.position, targetPos) < 1f);
+            animator.Play("Run");
 
-        yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(2f);
         
 
-        Destroy(gameObject);
+            Destroy(gameObject);
+        } else {
+            yield return new WaitForSeconds(5f);
+            GameEvents.RaiseOnShowWinScreen();
+        }
+        
+        
 
         yield return null;
     }

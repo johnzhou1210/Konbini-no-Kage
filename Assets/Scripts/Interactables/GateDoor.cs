@@ -31,16 +31,30 @@ public class GateDoor : MonoBehaviour, IInteractable {
 
     public void Interact() {
         Debug.Log("Interacted with gate door");
+
+        int currTime = GameQuery.OnGetMinutesAfterMidnight?.Invoke() ?? 0;
         
         if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) < 3) {
             GameEvents.RaiseOnDialogTypewriterStartTypewriter("No reason to go in here right now.");
-        } else {
+        } else if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) == 3) {
+            if (GameQuery.OnGetStalkerAngryCutsceneInProgress?.Invoke() ?? false) {
+                GameEvents.RaiseOnDialogTypewriterStartTypewriter("No, that's a death wish!");
+            } else {
+                
+                if (currTime > TimeUtils.ConvertToMinutesAfterMidnight(1, 44) &&
+                    currTime < TimeUtils.ConvertToMinutesAfterMidnight(6, 0)) {
+                    GameEvents.RaiseOnSetGateDoorOpened(!gateOpened);
+                } else {
+                    GameEvents.RaiseOnDialogTypewriterStartTypewriter("No reason to go in here right now.");
+                }
+            }
+            
+        } else if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) == 4) {
             if (GameQuery.OnGetStalkerAngryCutsceneInProgress?.Invoke() ?? false) {
                 GameEvents.RaiseOnDialogTypewriterStartTypewriter("No, that's a death wish!");
             } else {
                 GameEvents.RaiseOnSetGateDoorOpened(!gateOpened);
             }
-            
         }
 
     }
