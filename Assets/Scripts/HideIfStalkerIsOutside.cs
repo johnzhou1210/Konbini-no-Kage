@@ -9,7 +9,7 @@ public class HideIfStalkerIsOutside : MonoBehaviour {
         behindPlayer.SetActive(GameQuery.OnGetNight4InStoreTrigger?.Invoke() ?? false);
         if ((GameQuery.OnGetMinutesAfterMidnight?.Invoke() ?? 0) > TimeUtils.ConvertToMinutesAfterMidnight(4, 0) &&
             (GameQuery.OnGetMinutesAfterMidnight?.Invoke() ?? 0) < TimeUtils.ConvertToMinutesAfterMidnight(6, 0)) {
-            if (!GameQuery.OnGetNight4InStoreTrigger?.Invoke() ?? false) {
+            if ((GameQuery.OnGetCurrentNight?.Invoke() ?? 1) == 4 && !(GameQuery.OnGetNight4InStoreTrigger?.Invoke() ?? false)) {
                 scheming.SetActive(true);
             }
         }

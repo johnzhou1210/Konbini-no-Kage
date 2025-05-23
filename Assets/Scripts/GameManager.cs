@@ -102,6 +102,102 @@ public class GameManager : MonoBehaviour {
                 TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
             ),
             new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
+                new() { CustomerTendency.OUTSIDEWALK, CustomerTendency.STARE },
+                TimeUtils.ConvertToMinutesAfterMidnight(TimeUtils.RandomRangeMod24(22, 4), Random.Range(0, 40))
+            ),
+            new CustomerTendencyEntry(
                 new() {
                     CustomerTendency.SIDEDOOR, CustomerTendency.STARE, CustomerTendency.OBSESSIVE,
                     CustomerTendency.VARIEDSPEED
@@ -660,9 +756,9 @@ public class GameManager : MonoBehaviour {
                     GameEvents.RaiseOnSpawnStalkerCustomer();
                 }
 
-                if (MinutesAfterMidnight == night4StalkerLeaveTime) {
-                    GameEvents.RaiseOnNight4StalkerLeave();
-                }
+                // if (MinutesAfterMidnight == night4StalkerLeaveTime) {
+                //     GameEvents.RaiseOnNight4StalkerLeave();
+                // }
                 
             }
 

@@ -63,7 +63,7 @@ public class PlayerInputManager : MonoBehaviour {
                 safeZoneTimeElapsedWithoutMoving = 0f;
             }
 
-            if (safeZoneTimeElapsedWithoutMoving > 5f && !(GameQuery.OnGetIsGateOpened?.Invoke() ?? false) && !playerDead) {
+            if (safeZoneTimeElapsedWithoutMoving > 3f && !(GameQuery.OnGetIsGateOpened?.Invoke() ?? false) && !playerDead) {
                 GameEvents.RaiseOnStalkerEndChase();
                 night3Chase = false;
             }

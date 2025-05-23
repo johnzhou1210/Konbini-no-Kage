@@ -1427,7 +1427,7 @@ MonoBehaviour:
   maxCheckoutTime: 120
   targetStopRadius: 1.5
   playerLookRange: 5
-  windowShoppingChance: 0.5
+  windowShoppingChance: 0
   plasticBag: {fileID: 8651788333556062158}
   minRandomItems: 1
   maxRandomItems: 4
